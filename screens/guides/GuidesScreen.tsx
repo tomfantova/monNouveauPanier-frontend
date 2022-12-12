@@ -20,13 +20,13 @@ export default function GuidesScreen({ navigation }) {
     )
 }
 
-const makeStyles = (height, width, fontScale) => {
+const makeStyles = (height: number, width: number, fontScale: number) => {
 
-    const adaptToHeight = size => {
+    const adaptToHeight = (size: number) => {
         return ((height * size) / 844) / fontScale
     }
 
-    const normalize = size => {
+    const normalize = (size: number) => {
         return ((width * size) / 390) / fontScale
     }
 

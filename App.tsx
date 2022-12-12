@@ -24,13 +24,15 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import WelcomeScreen from "./screens/WelcomeScreen";
-import GuidesScreen from "./screens/GuidesScreen";
-import BookmarksScreen from "./screens/BookmarksScreen";
-import OffersScreen from "./screens/OffersScreen";
-import ListsScreen from "./screens/ListsScreen";
+import WelcomeScreen from "./screens/connection/WelcomeScreen";
+import GuidesScreen from "./screens/guides/GuidesScreen";
+import BookmarksScreen from "./screens/bookmarks/BookmarksScreen";
+import OffersScreen from "./screens/offers/OffersScreen";
+import ListsScreen from "./screens/lists/ListsScreen";
 
-import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faBookOpen, faStar, faBasketShopping, faListCheck } from '@fortawesome/free-solid-svg-icons'
+import { IconLookup, IconDefinition, findIconDefinition } from '@fortawesome/fontawesome-svg-core'
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -45,16 +47,16 @@ export default function App() {
             let iconName = "";
 
             if (route.name === "MNP") {
-              iconName = "map-pin";
+              iconName = faBookOpen;
             } else if (route.name === "Favoris") {
-              iconName = "map-pin";
+              iconName = faStar;
             } else if (route.name === "Offres") {
-              iconName = "map-pin";
+              iconName = faBasketShopping;
             } else if (route.name === "Listes") {
-              iconName = "map-pin";
+              iconName = faListCheck;
             }
 
-            return <FontAwesome name={iconName} size={size} color={color} />;
+            return <FontAwesomeIcon icon={iconName} size={size} color={color} />;
           },
           tabBarActiveTintColor: "orange",
           tabBarInactiveTintColor: "grey",
