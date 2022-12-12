@@ -13,7 +13,8 @@ export type UserState = {
       products: string[];
       labels: string[];
     };
-    lists: [];
+    lists: any[];
+    currentList: any | null;
   };
 };
 
@@ -31,6 +32,7 @@ const initialState: UserState = {
       labels: [],
     },
     lists: [],
+    currentList: null,
   },
 };
 
@@ -44,8 +46,18 @@ export const userSlice = createSlice({
     ) => {
       state.value = action.payload;
     },
+    addCurrentList: (
+      state: UserState,
+      action: PayloadAction<UserState["value"]>
+    ) => {
+      state.value.currentList = action.payload;
+    },
+    removeCurrentList: (state: UserState) => {
+      state.value.currentList = null;
+    },
   },
 });
 
-export const { connectUser } = userSlice.actions;
+export const { connectUser, addCurrentList, removeCurrentList } =
+  userSlice.actions;
 export default userSlice.reducer;

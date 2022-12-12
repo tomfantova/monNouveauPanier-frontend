@@ -29,6 +29,7 @@ import GuidesScreen from "./screens/GuidesScreen";
 import BookmarksScreen from "./screens/BookmarksScreen";
 import OffersScreen from "./screens/OffersScreen";
 import ListsScreen from "./screens/ListsScreen";
+import SectionsScreen from "./screens/SectionsScreen";
 
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
@@ -81,6 +82,8 @@ export default function App() {
           >
             <Stack.Screen name="Bienvenue" component={WelcomeScreen} />
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
+            <Stack.Screen name="Lists" component={ListsScreen} />
+            <Stack.Screen name="Sections" component={SectionsScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </PersistGate>
