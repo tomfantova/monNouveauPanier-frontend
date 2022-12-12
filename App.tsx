@@ -82,7 +82,6 @@ export default function App() {
           >
             <Stack.Screen name="Bienvenue" component={WelcomeScreen} />
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
-            <Stack.Screen name="Lists" component={ListsScreen} />
             <Stack.Screen name="Sections" component={SectionsScreen} />
           </Stack.Navigator>
         </NavigationContainer>

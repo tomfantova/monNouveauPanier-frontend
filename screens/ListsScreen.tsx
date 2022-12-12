@@ -28,13 +28,17 @@ export default function ListsScreen({ navigation }) {
       name: newListName,
       date: date.toLocaleDateString("fr"),
       active: true,
-      categories: {
-        vegets: [],
-        meats: [],
-        fishs: [],
-        grocery: [],
-        deserts: [],
-      },
+      categories: [
+        {
+          name: "Fruits et légumes",
+          image: "../assets/lists/rayon.png",
+          items: [],
+        },
+        { name: "Viandes", image: "../assets/lists/rayon.png", items: [] },
+        { name: "Poissons", image: "../assets/lists/rayon.png", items: [] },
+        { name: "Epicerie", image: "../assets/lists/rayon.png", items: [] },
+        { name: "Desserts", image: "../assets/lists/rayon.png", items: [] },
+      ],
     };
     dispatch(addCurrentList(listData));
     navigation.navigate("Sections");
@@ -54,7 +58,7 @@ export default function ListsScreen({ navigation }) {
                 value={newListName}
               />
               <TouchableOpacity onPress={() => handleNewList()}>
-                <FontAwesome name="arrow-right" size={30} color="#000000" />
+                <FontAwesome name="arrow-right" size={30} />
               </TouchableOpacity>
             </View>
             <Text style={styles.listsText}>Listes en cours</Text>
