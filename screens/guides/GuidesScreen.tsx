@@ -1,5 +1,5 @@
 import React from 'react'
-import { SafeAreaView, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
+import { Image, SafeAreaView, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 export default function GuidesScreen({ navigation }) {
@@ -10,6 +10,9 @@ export default function GuidesScreen({ navigation }) {
     return (
         <KeyboardAwareScrollView>
             <View style={styles.backgroundView}>
+                {/* <View style={styles.headerContainer}>
+                    <Image source={require('../../assets/logo-transparent.png')} style={styles.headerLogo} />
+                </View> */}
                 <SafeAreaView style={styles.safeAreaViewContainer}>
                     <View style={styles.globalViewContainer}>
                         <Text>GuidesScreen</Text>
@@ -54,6 +57,21 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             paddingHorizontal: normalize(20),
             paddingVertical: normalize(20),
         },
+        // headerContainer: {
+        //     position: 'absolute',
+        //     top: 0,
+        //     width: '100%',
+        //     height: normalize(90),
+        //     borderBottomWidth: 0.2,
+        //     borderBottomColor: 'lightgrey',
+        //     backgroundColor: "white",
+        // },
+        // headerLogo: {
+        //     width: normalize(40),
+        //     height: normalize(40),
+        //     position: 'absolute',
+        //     top: 0,
+        // }
     })
 
 }
