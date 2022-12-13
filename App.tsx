@@ -1,4 +1,5 @@
 import React from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native'
 import { StatusBar } from "expo-status-bar";
 
 import { Provider } from "react-redux";
@@ -32,11 +33,39 @@ import OffersScreen from "./screens/offers/OffersScreen";
 import ListsScreen from "./screens/lists/ListsScreen";
 import SectionsScreen from "./screens/lists/SectionsScreen";
 
-import FontAwesome from "react-native-vector-icons/FontAwesome";
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 export default function App() {
+
+  const { height, width, fontScale } = useWindowDimensions();
+  const styles = makeStyles(height, width, fontScale)
+
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
+
+  function LogoTitle() {
+    return (
+      <View style={styles.headerContainer}>
+        <View style={styles.headerItemContainer}>
+          <TouchableOpacity style={styles.headerMenuButton}>
+            <MaterialCommunityIcon name="handshake" color="#888888" size={30} />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.headerItemContainer}>
+          <Image
+            style={styles.headerLogoImage}
+            source={require('./assets/logo/logo-transparent.png')}
+          />
+          <Text style={styles.headerLogoName}>Mon Nouveau Panier</Text>
+        </View>
+        <View style={styles.headerItemContainer}>
+          <TouchableOpacity style={styles.headerProfileButton}>
+            <Image style={styles.headerProfileImage} source={require('./assets/avatars/type2.png')} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
   const TabNavigator = () => {
     return (
@@ -44,29 +73,38 @@ export default function App() {
         screenOptions={({ route }) => ({
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size }) => {
-            let iconName = "";
+            let iconName: string = "";
+            let customSize: number = 0
 
-            if (route.name === "MNP") {
-              iconName = "map-pin";
-            } else if (route.name === "Favoris") {
-              iconName = "map-pin";
-            } else if (route.name === "Offres") {
-              iconName = "map-pin";
-            } else if (route.name === "Listes") {
-              iconName = "map-pin";
+            if (route.name === "Guides") {
+              iconName = "book-search"; // image-search note-search file-search database-search clipboard-text-search text-box-search tag-search book-search book-search-outline bookmark-box-multiple-outline
+              customSize = size * 1.16
+            } else if (route.name === "Bookmarks") {
+              iconName = "star"; // star star-outline star-half-full
+              customSize = size * 1.2
+            } else if (route.name === "Offers") {
+              iconName = "store";  // storefront-plus handshake cart-heart hand-heart-outline store-clock store-check store-marker store-plus basket-plus-outline
+              customSize = size * 1.2
+            } else if (route.name === "Lists") {
+              iconName = "playlist-edit";
+              customSize = size * 1.4
             }
 
-            return <FontAwesome name={iconName} size={size} color={color} />;
+            return <MaterialCommunityIcon name={iconName} color={color} size={customSize} />;
           },
-          tabBarActiveTintColor: "orange",
-          tabBarInactiveTintColor: "grey",
+          tabBarActiveTintColor: "#F1A100",
+          tabBarInactiveTintColor: "#AFAFAF",
           headerShown: true,
         })}
       >
-        <Tab.Screen name="MNP" component={GuidesScreen} />
-        <Tab.Screen name="Favoris" component={BookmarksScreen} />
-        <Tab.Screen name="Offres" component={OffersScreen} />
-        <Tab.Screen name="Listes" component={ListsScreen} />
+        <Tab.Screen
+          name="Guides"
+          component={GuidesScreen}
+          options={{ title: 'Guides', headerTitle: (props: any) => <LogoTitle {...props} /> }}
+        />
+        <Tab.Screen name="Bookmarks" component={BookmarksScreen} options={{ title: 'Favoris' }} />
+        <Tab.Screen name="Offers" component={OffersScreen} options={{ title: 'Offres' }} />
+        <Tab.Screen name="Lists" component={ListsScreen} options={{ title: 'Listes' }} />
       </Tab.Navigator>
     );
   };
@@ -89,4 +127,63 @@ export default function App() {
       </PersistGate>
     </Provider>
   );
+}
+
+const makeStyles = (height: number, width: number, fontScale: number) => {
+
+  const adaptToHeight = (size: number) => {
+      return ((height * size) / 844) / fontScale
+  }
+
+  const normalize = (size: number) => {
+      return ((width * size) / 390) / fontScale
+  }
+
+  return StyleSheet.create({
+    headerContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '100%',
+    },
+    headerItemContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 6,
+    },
+    headerMenuButton: {
+      height: 38,
+      width: 38,
+      borderColor: '#AFAFAF',
+      borderRadius: 10,
+      borderWidth: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    headerLogoImage: {
+      height: 32,
+      width: 32,
+      marginBottom: 2,
+    },
+    headerLogoName: {
+      textAlign: 'center',
+      color: '#DAAC3C',
+      fontSize: 9,
+      fontWeight: '500',
+    },
+    headerProfileButton: {
+      height: 38,
+      width: 38,
+      borderColor: '#AFAFAF',
+      backgroundColor: '#EFEFEF',
+      borderRadius: 50,
+      borderWidth: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    headerProfileImage: {
+      height: '150%',
+      width: '150%',
+    },
+  })
+
 }
