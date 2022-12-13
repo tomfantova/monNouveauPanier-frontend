@@ -48,7 +48,7 @@ export default function SectionsScreen({ navigation }) {
 
   const newCat = {
     name: newCatName,
-    image: "../assets/lists/rayon.png",
+    image: "../../assets/lists/rayon.png",
     items: [],
   };
 
@@ -126,7 +126,7 @@ export default function SectionsScreen({ navigation }) {
               }}
             >
               <Image
-                source={require("../assets/lists/rayon.png")}
+                source={require("../../assets/lists/rayon.png")}
                 style={styles.picture}
               />
             </TouchableOpacity>

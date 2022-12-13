@@ -60,7 +60,7 @@ export default function App() {
         </View>
         <View style={styles.headerItemContainer}>
           <TouchableOpacity style={styles.headerProfileButton}>
-            <Image style={styles.headerProfileImage} source={require('./assets/avatars/type2.png')} />
+            <Image style={styles.headerProfileImage} source={require('./assets/avatars/type1.png')} />
           </TouchableOpacity>
         </View>
       </View>
@@ -149,6 +149,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       justifyContent: 'center',
       alignItems: 'center',
       marginBottom: 6,
+      marginHorizontal: 0,
     },
     headerMenuButton: {
       height: 38,
