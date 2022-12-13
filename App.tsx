@@ -4,12 +4,13 @@ import { StatusBar } from "expo-status-bar";
 import { Provider } from "react-redux";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import user from "./reducers/user";
+import currentList from "./reducers/currentList";
 
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const reducers = combineReducers({ user });
+const reducers = combineReducers({ user, currentList });
 const persistConfig = { key: "monnouveaupanier", storage: AsyncStorage };
 
 const store = configureStore({

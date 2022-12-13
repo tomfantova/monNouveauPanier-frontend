@@ -18,17 +18,21 @@ import {
   removeCurrentList,
   addCategory,
   removeCategory,
+  addArticles,
   UserState,
-} from "../reducers/user";
+} from "../reducers/currentList";
 
 export default function SectionsScreen({ navigation }) {
   const { height, width, fontScale } = useWindowDimensions();
   const styles = makeStyles(height, width, fontScale);
   const [modalVisible, setModalVisible] = useState(false);
+  const [modal2Visible, setModal2Visible] = useState(false);
   const [newCatName, setNewCatName] = useState("");
+  const [catOpened, setCatOpened] = useState("");
+  const [newArticle, setNewArticle] = useState("");
   const dispatch = useDispatch();
   const currentList = useSelector(
-    (state: { user: UserState }) => state.user.value.currentList
+    (state: { currentList: UserState }) => state.currentList.value
   );
 
   // Ajouter un rayon dont ouverture et fermeture modale //
@@ -48,7 +52,7 @@ export default function SectionsScreen({ navigation }) {
     items: [],
   };
 
-  const handleAdd = () => {
+  const handleAddCat = () => {
     dispatch(addCategory(newCat));
     handleCloseModal();
   };
@@ -56,9 +60,47 @@ export default function SectionsScreen({ navigation }) {
   // Supprimer un rayon //
 
   const handleDelete = (catName) => {
-    console.log(catName);
     dispatch(removeCategory(catName));
   };
+
+  // Modification des articles d'un rayon dont ouverture et fermeture modale //
+
+  const handleOpenModal2 = (category) => {
+    setCatOpened(category);
+    setModal2Visible(true);
+  };
+
+  const handleCloseModal2 = () => {
+    setModal2Visible(false);
+  };
+
+  const handleAddArticles = (category) => {
+    console.log(category);
+    for (let item of currentList.categories) {
+      if (category === item.name) {
+        dispatch(addArticles({ categoryName: category, items: newArticle }));
+      }
+      setNewArticle("");
+      handleCloseModal2();
+    }
+  };
+
+  const articlesList = (
+    <View style={styles.articlesCard}>
+      <View style={styles.articlesInput}>
+        <TextInput
+          placeholder="Nommez votre article"
+          onChangeText={(value) => setNewArticle(value)}
+          value={newArticle}
+        />
+      </View>
+      <TouchableOpacity>
+        <FontAwesome name="trash" size={25} />
+      </TouchableOpacity>
+    </View>
+  );
+
+  console.log(currentList.categories[2].items);
 
   // Afficher les rayons de la liste en cours de création //
 
@@ -78,29 +120,35 @@ export default function SectionsScreen({ navigation }) {
                 <FontAwesome name="minus-circle" size={20} />
               </TouchableOpacity>
             </View>
-            <Image
-              source={require("../assets/lists/rayon.png")}
-              style={styles.picture}
-            />
+            <TouchableOpacity
+              onPress={() => {
+                handleOpenModal2(categoryData.name);
+              }}
+            >
+              <Image
+                source={require("../assets/lists/rayon.png")}
+                style={styles.picture}
+              />
+            </TouchableOpacity>
           </View>
         );
       }
     );
   }
 
-  // Au retour arrière, remplace l'affichage du nom de liste par String vide //
+  // Retour arrière et effacer la liste en cours de création //
 
   let listName = "";
   if (currentList) {
     listName = currentList.name;
   }
 
-  // Retour arrière et effacer la liste en cours de création //
-
   const handleQuit = () => {
     navigation.navigate("TabNavigator", { screen: "Lists" });
     dispatch(removeCurrentList());
   };
+
+  // Return du screen //
 
   return (
     <View style={styles.backgroundView}>
@@ -123,11 +171,36 @@ export default function SectionsScreen({ navigation }) {
               value={newCatName}
             />
             <TouchableOpacity
-              onPress={() => handleAdd()}
+              onPress={() => handleAddCat()}
               style={styles.button}
               activeOpacity={0.8}
             >
               <Text style={styles.textButton}>Ajouter</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      <Modal visible={modal2Visible} animationType="fade" transparent>
+        <View style={styles.centeredView2}>
+          <View style={styles.modalView2}>
+            <TouchableOpacity
+              onPress={() => handleCloseModal2()}
+              activeOpacity={0.8}
+            >
+              <FontAwesome
+                style={styles.xModal}
+                name="close"
+                size={20}
+              ></FontAwesome>
+            </TouchableOpacity>
+            <Text style={styles.openedCat}>{catOpened}</Text>
+            {articlesList}
+            <TouchableOpacity
+              onPress={() => handleAddArticles(catOpened)}
+              style={styles.button}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.textButton}>Valider</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -160,6 +233,8 @@ export default function SectionsScreen({ navigation }) {
     </View>
   );
 }
+
+// Style du screen //
 
 const makeStyles = (height, width, fontScale) => {
   const adaptToHeight = (size) => {
@@ -250,6 +325,28 @@ const makeStyles = (height, width, fontScale) => {
       shadowRadius: 4,
       elevation: 5,
     },
+    centeredView2: {
+      flex: 1,
+      justifyContent: "flex-end",
+      alignItems: "center",
+      marginBottom: normalize(55),
+    },
+    modalView2: {
+      height: normalize(660),
+      width: normalize(380),
+      backgroundColor: "white",
+      borderRadius: normalize(20),
+      padding: normalize(20),
+      alignItems: "center",
+      shadowColor: "black",
+      shadowOffset: {
+        width: normalize(10),
+        height: normalize(10),
+      },
+      shadowOpacity: 0.5,
+      shadowRadius: 4,
+      elevation: 5,
+    },
     button: {
       width: normalize(150),
       alignItems: "center",
@@ -266,6 +363,24 @@ const makeStyles = (height, width, fontScale) => {
     },
     xModal: {
       marginBottom: normalize(15),
+    },
+    openedCat: {
+      marginBottom: normalize(20),
+    },
+    articlesCard: {
+      width: normalize(330),
+      flexDirection: "row",
+      justifyContent: "space-around",
+    },
+    articlesInput: {
+      height: normalize(30),
+      width: normalize(280),
+      borderWidth: normalize(1),
+      borderRadius: normalize(5),
+      borderColor: "black",
+      alignItems: "flex-start",
+      justifyContent: "center",
+      paddingHorizontal: normalize(10),
     },
   });
 };
