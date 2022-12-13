@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -25,11 +25,11 @@ import {
 export default function SectionsScreen({ navigation }) {
   const { height, width, fontScale } = useWindowDimensions();
   const styles = makeStyles(height, width, fontScale);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modal2Visible, setModal2Visible] = useState(false);
+  const [modalCategoryVisible, setModalCategoryVisible] = useState(false);
+  const [modalArticlesVisible, setmodalArticlesVisible] = useState(false);
+  const [modalQuitVisible, setModalQuitVisible] = useState(false);
   const [newCatName, setNewCatName] = useState("");
   const [catOpened, setCatOpened] = useState("");
-  const [newArticle, setNewArticle] = useState("");
   const dispatch = useDispatch();
   const currentList = useSelector(
     (state: { currentList: UserState }) => state.currentList.value
@@ -37,12 +37,12 @@ export default function SectionsScreen({ navigation }) {
 
   // Ajouter un rayon dont ouverture et fermeture modale //
 
-  const handleOpenModal = () => {
-    setModalVisible(true);
+  const handleOpenModalCategory = () => {
+    setModalCategoryVisible(true);
   };
 
-  const handleCloseModal = () => {
-    setModalVisible(false);
+  const handleCloseModalCategory = () => {
+    setModalCategoryVisible(false);
     setNewCatName("");
   };
 
@@ -54,7 +54,7 @@ export default function SectionsScreen({ navigation }) {
 
   const handleAddCat = () => {
     dispatch(addCategory(newCat));
-    handleCloseModal();
+    handleCloseModalCategory();
   };
 
   // Supprimer un rayon //
@@ -65,42 +65,74 @@ export default function SectionsScreen({ navigation }) {
 
   // Modification des articles d'un rayon dont ouverture et fermeture modale //
 
-  const handleOpenModal2 = (category) => {
+  const handleOpenmodalArticles = (category, items) => {
+    if (items.length) {
+      setNumInputs(items.length);
+      for (let item of items) {
+        refInputs.current.push(item);
+      }
+      refInputs.current.shift();
+    }
     setCatOpened(category);
-    setModal2Visible(true);
+    setmodalArticlesVisible(true);
   };
 
-  const handleCloseModal2 = () => {
-    setModal2Visible(false);
+  const handleCloseModalArticles = () => {
+    setmodalArticlesVisible(false);
+    refInputs.current = [""];
+    setNumInputs(1);
   };
+
+  const [textValue, setTextValue] = useState("");
+  const [numInputs, setNumInputs] = useState(1);
+  const refInputs = useRef<string[]>([textValue]);
+  const setInputValue = (index: number, value: string) => {
+    const inputs = refInputs.current;
+    inputs[index] = value;
+    setTextValue(value);
+  };
+  const addInput = () => {
+    refInputs.current.push("");
+    setNumInputs((value) => value + 1);
+  };
+  const removeInput = (i: number) => {
+    refInputs.current.splice(i, 1)[0];
+    setNumInputs((value) => value - 1);
+  };
+
+  const inputs: JSX.Element[] = [];
+  for (let i = 0; i < numInputs; i++) {
+    inputs.push(
+      <View style={styles.articlesCard} key={i}>
+        <TextInput
+          onChangeText={(value) => setInputValue(i, value)}
+          value={refInputs.current[i]}
+          placeholder="Article"
+          style={styles.articlesInput}
+        />
+        {/* Supprimer l'input */}
+        <TouchableOpacity onPress={() => removeInput(i)}>
+          <FontAwesome name="trash" size={20} />
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   const handleAddArticles = (category) => {
-    console.log(category);
+    const filteredArticles = refInputs.current.filter((x) => x.length > 0);
     for (let item of currentList.categories) {
       if (category === item.name) {
-        dispatch(addArticles({ categoryName: category, items: newArticle }));
+        dispatch(
+          addArticles({ categoryName: category, items: filteredArticles })
+        );
       }
-      setNewArticle("");
-      handleCloseModal2();
     }
+    refInputs.current = [""];
+    setNumInputs(1);
+    handleCloseModalArticles();
   };
 
-  const articlesList = (
-    <View style={styles.articlesCard}>
-      <View style={styles.articlesInput}>
-        <TextInput
-          placeholder="Nommez votre article"
-          onChangeText={(value) => setNewArticle(value)}
-          value={newArticle}
-        />
-      </View>
-      <TouchableOpacity>
-        <FontAwesome name="trash" size={25} />
-      </TouchableOpacity>
-    </View>
-  );
-
-  console.log(currentList.categories[2].items);
+  console.log(currentList.categories);
 
   // Afficher les rayons de la liste en cours de création //
 
@@ -122,7 +154,7 @@ export default function SectionsScreen({ navigation }) {
             </View>
             <TouchableOpacity
               onPress={() => {
-                handleOpenModal2(categoryData.name);
+                handleOpenmodalArticles(categoryData.name, categoryData.items);
               }}
             >
               <Image
@@ -136,7 +168,7 @@ export default function SectionsScreen({ navigation }) {
     );
   }
 
-  // Retour arrière et effacer la liste en cours de création //
+  // Retour arrière et effacer la liste en cours de création, dont modale //
 
   let listName = "";
   if (currentList) {
@@ -146,17 +178,22 @@ export default function SectionsScreen({ navigation }) {
   const handleQuit = () => {
     navigation.navigate("TabNavigator", { screen: "Lists" });
     dispatch(removeCurrentList());
+    setModalQuitVisible(false);
+  };
+
+  const handleWishQuit = () => {
+    setModalQuitVisible(true);
   };
 
   // Return du screen //
 
   return (
     <View style={styles.backgroundView}>
-      <Modal visible={modalVisible} animationType="fade" transparent>
+      <Modal visible={modalCategoryVisible} animationType="fade" transparent>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <TouchableOpacity
-              onPress={() => handleCloseModal()}
+              onPress={() => handleCloseModalCategory()}
               activeOpacity={0.8}
             >
               <FontAwesome
@@ -180,11 +217,11 @@ export default function SectionsScreen({ navigation }) {
           </View>
         </View>
       </Modal>
-      <Modal visible={modal2Visible} animationType="fade" transparent>
+      <Modal visible={modalArticlesVisible} animationType="fade" transparent>
         <View style={styles.centeredView2}>
           <View style={styles.modalView2}>
             <TouchableOpacity
-              onPress={() => handleCloseModal2()}
+              onPress={() => handleCloseModalArticles()}
               activeOpacity={0.8}
             >
               <FontAwesome
@@ -194,7 +231,12 @@ export default function SectionsScreen({ navigation }) {
               ></FontAwesome>
             </TouchableOpacity>
             <Text style={styles.openedCat}>{catOpened}</Text>
-            {articlesList}
+            <KeyboardAwareScrollView>
+              {inputs}
+              <TouchableOpacity style={styles.addArticle} onPress={addInput}>
+                <Text>+ Ajoutez un nouvel article</Text>
+              </TouchableOpacity>
+            </KeyboardAwareScrollView>
             <TouchableOpacity
               onPress={() => handleAddArticles(catOpened)}
               style={styles.button}
@@ -205,13 +247,37 @@ export default function SectionsScreen({ navigation }) {
           </View>
         </View>
       </Modal>
+      <Modal visible={modalQuitVisible} animationType="fade" transparent>
+        <View style={styles.centeredView3}>
+          <View style={styles.modalView3}>
+            <Text style={styles.warning}>Attention !</Text>
+            <Text style={styles.advertisement}>
+              En quittant vous perdrez toutes les données de votre liste.
+            </Text>
+            <TouchableOpacity
+              onPress={() => setModalQuitVisible(false)}
+              style={styles.button}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.textButton}>Rester ici</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleQuit()}
+              style={styles.button}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.textButton}>Quitter</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       <SafeAreaView style={styles.safeAreaViewContainer}>
         <View style={styles.globalViewContainer}>
           <View style={styles.header}>
             <FontAwesome
               name="chevron-left"
               size={30}
-              onPress={() => handleQuit()}
+              onPress={() => handleWishQuit()}
             />
             <Text style={styles.title}>{listName}</Text>
           </View>
@@ -223,7 +289,7 @@ export default function SectionsScreen({ navigation }) {
                 name="plus-circle"
                 size={90}
                 onPress={() => {
-                  handleOpenModal();
+                  handleOpenModalCategory();
                 }}
               ></FontAwesome>
             </View>
@@ -332,8 +398,30 @@ const makeStyles = (height, width, fontScale) => {
       marginBottom: normalize(55),
     },
     modalView2: {
-      height: normalize(660),
+      height: normalize(730),
       width: normalize(380),
+      backgroundColor: "white",
+      borderRadius: normalize(20),
+      padding: normalize(20),
+      alignItems: "center",
+      shadowColor: "black",
+      shadowOffset: {
+        width: normalize(10),
+        height: normalize(10),
+      },
+      shadowOpacity: 0.5,
+      shadowRadius: 4,
+      elevation: 5,
+    },
+    centeredView3: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      marginBottom: normalize(55),
+    },
+    modalView3: {
+      height: normalize(250),
+      width: normalize(350),
       backgroundColor: "white",
       borderRadius: normalize(20),
       padding: normalize(20),
@@ -371,6 +459,7 @@ const makeStyles = (height, width, fontScale) => {
       width: normalize(330),
       flexDirection: "row",
       justifyContent: "space-around",
+      marginVertical: normalize(5),
     },
     articlesInput: {
       height: normalize(30),
@@ -381,6 +470,17 @@ const makeStyles = (height, width, fontScale) => {
       alignItems: "flex-start",
       justifyContent: "center",
       paddingHorizontal: normalize(10),
+    },
+    addArticle: {
+      margin: normalize(20),
+      alignItems: "center",
+    },
+    warning: {
+      fontSize: normalize(30),
+      marginBottom: normalize(20),
+    },
+    advertisement: {
+      textAlign: "center",
     },
   });
 };
