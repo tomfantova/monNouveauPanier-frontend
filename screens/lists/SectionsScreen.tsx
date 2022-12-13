@@ -20,7 +20,7 @@ import {
   removeCategory,
   addArticles,
   UserState,
-} from "../reducers/currentList";
+} from "../../reducers/currentList";
 
 export default function SectionsScreen({ navigation }) {
   const { height, width, fontScale } = useWindowDimensions();
