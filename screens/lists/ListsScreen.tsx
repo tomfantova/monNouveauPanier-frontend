@@ -12,7 +12,7 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useDispatch } from "react-redux";
-import { addCurrentList } from "../reducers/currentList";
+import { addCurrentList } from "../../reducers/currentList";
 
 export default function ListsScreen({ navigation }) {
   const { height, width, fontScale } = useWindowDimensions();
