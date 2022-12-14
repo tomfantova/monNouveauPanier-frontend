@@ -11,16 +11,24 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { useDispatch } from "react-redux";
-import { addCurrentList } from "../../reducers/currentList";
+import { useDispatch, useSelector } from "react-redux";
+import { emptyLists } from "../../reducers/user";
+import { addCurrentList, UserState } from "../../reducers/currentList";
 
 export default function ListsScreen({ navigation }) {
   const { height, width, fontScale } = useWindowDimensions();
   const styles = makeStyles(height, width, fontScale);
   const dispatch = useDispatch();
   const [newListName, setNewListName] = useState("");
+  const user = useSelector((state: { user: UserState }) => state.user.value);
 
-  // Ajouter une nouvelle liste au reducer //
+  // A enlever : supprimer toutes les listes pour test //
+
+  const handleEmptyLists = () => {
+    dispatch(emptyLists());
+  };
+
+  // Ajouter une nouvelle liste au reducer currentList //
 
   const handleNewList = () => {
     const date = new Date();
@@ -42,37 +50,73 @@ export default function ListsScreen({ navigation }) {
     };
     dispatch(addCurrentList(listData));
     navigation.navigate("Sections");
+    setNewListName("");
   };
 
+  // Afficher les listes en cours et archivées depuis le reducer user//
+
+  const actives = user.lists.map((listsData, i) => {
+    if (listsData.active)
+      return (
+        <View key={i} style={styles.card}>
+          <TouchableOpacity style={styles.button} activeOpacity={0.8}>
+            <Text style={styles.textButton}>
+              {listsData.name} le {listsData.date}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+  });
+
+  const inactives = user.lists.map((listsData, i) => {
+    if (!listsData.active)
+      return (
+        <View key={i} style={styles.card}>
+          <TouchableOpacity style={styles.button} activeOpacity={0.8}>
+            <Text style={styles.textButton}>
+              {listsData.name} le {listsData.date}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+  });
+
+  // Listes archivées //
+
+  // Return du screen //
+
   return (
-    <KeyboardAwareScrollView>
-      <View style={styles.backgroundView}>
-        <SafeAreaView style={styles.safeAreaViewContainer}>
-          <View style={styles.globalViewContainer}>
-            <Text>Créez, modifiez ou réutilisez vos listes</Text>
-            <View style={styles.addList}>
-              <TextInput
-                style={styles.input}
-                placeholder="Nommez votre liste et Go !"
-                onChangeText={(value) => setNewListName(value)}
-                value={newListName}
-              />
-              <TouchableOpacity onPress={() => handleNewList()}>
-                <FontAwesome name="arrow-right" size={30} />
-              </TouchableOpacity>
-            </View>
-            <Text style={styles.listsText}>Listes en cours</Text>
-            <View style={styles.lists}>
-              <Text>Listes en cours ici</Text>
-            </View>
-            <Text style={styles.listsText}>Listes archivées</Text>
-            <View style={styles.lists}>
-              <Text>Listes archivées ici</Text>
-            </View>
+    <View style={styles.backgroundView}>
+      <SafeAreaView style={styles.safeAreaViewContainer}>
+        <View style={styles.globalViewContainer}>
+          <Text style={styles.regularText}>
+            Créez, modifiez ou réutilisez vos listes
+          </Text>
+          <View style={styles.addList}>
+            <TextInput
+              style={styles.input}
+              placeholder="Nommez votre liste et Go !"
+              placeholderTextColor="#999999"
+              onChangeText={(value) => setNewListName(value)}
+              value={newListName}
+            />
+            <TouchableOpacity onPress={() => handleNewList()}>
+              <FontAwesome name="arrow-right" size={30} color="#002654" />
+            </TouchableOpacity>
           </View>
-        </SafeAreaView>
-      </View>
-    </KeyboardAwareScrollView>
+          <KeyboardAwareScrollView>
+            <View style={styles.listsTitle}>
+              <Text style={styles.listsText}>Listes en cours</Text>
+            </View>
+            <View style={styles.lists}>{actives}</View>
+            <View style={styles.listsTitle}>
+              <Text style={styles.listsText}>Listes archivées</Text>
+            </View>
+            <View style={styles.lists}>{inactives}</View>
+          </KeyboardAwareScrollView>
+        </View>
+      </SafeAreaView>
+    </View>
   );
 }
 
@@ -109,8 +153,10 @@ const makeStyles = (height, width, fontScale) => {
       paddingVertical: normalize(20),
     },
     addList: {
+      marginVertical: normalize(20),
       flexDirection: "row",
       alignItems: "center",
+      justifyContent: "center",
     },
     input: {
       flexDirection: "row",
@@ -119,19 +165,45 @@ const makeStyles = (height, width, fontScale) => {
       backgroundColor: "#ffffff",
       padding: normalize(20),
       marginRight: normalize(20),
-      marginTop: normalize(20),
       borderRadius: normalize(10),
+    },
+    listsTitle: {
+      width: normalize(330),
+      paddingBottom: normalize(5),
+      borderBottomWidth: 2,
+      borderBottomColor: "#002654",
     },
     listsText: {
       marginTop: normalize(50),
       alignSelf: "flex-start",
+      fontSize: normalize(18),
     },
     lists: {
       marginTop: normalize(5),
       paddingTop: normalize(20),
-      borderTopWidth: 2,
-      borderTopColor: "black",
       alignSelf: "flex-start",
+    },
+    card: {
+      width: normalize(330),
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    button: {
+      width: normalize(300),
+      alignItems: "center",
+      marginTop: normalize(20),
+      paddingTop: normalize(8),
+      backgroundColor: "#F1A100",
+      borderRadius: normalize(10),
+    },
+    textButton: {
+      color: "black",
+      height: normalize(24),
+      fontWeight: "600",
+      fontSize: normalize(15),
+    },
+    regularText: {
+      fontSize: normalize(18),
     },
   });
 };

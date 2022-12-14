@@ -44,8 +44,14 @@ export const userSlice = createSlice({
     ) => {
       state.value = action.payload;
     },
+    addList: (state, action: PayloadAction<any>) => {
+      state.value.lists.push(action.payload);
+    },
+    emptyLists: (state) => {
+      state.value.lists = [];
+    },
   },
 });
 
-export const { connectUser } = userSlice.actions;
+export const { connectUser, addList, emptyLists } = userSlice.actions;
 export default userSlice.reducer;

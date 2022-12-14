@@ -21,6 +21,7 @@ import {
   addArticles,
   UserState,
 } from "../../reducers/currentList";
+import { addList } from "../../reducers/user";
 
 export default function SectionsScreen({ navigation }) {
   const { height, width, fontScale } = useWindowDimensions();
@@ -65,6 +66,8 @@ export default function SectionsScreen({ navigation }) {
 
   // Modification des articles d'un rayon dont ouverture et fermeture modale //
 
+  // Gestion de la modale //
+
   const handleOpenmodalArticles = (category, items) => {
     if (items.length) {
       setNumInputs(items.length);
@@ -82,6 +85,8 @@ export default function SectionsScreen({ navigation }) {
     refInputs.current = [""];
     setNumInputs(1);
   };
+
+  // Gestion des inputs articles //
 
   const [textValue, setTextValue] = useState("");
   const [numInputs, setNumInputs] = useState(1);
@@ -108,15 +113,18 @@ export default function SectionsScreen({ navigation }) {
           onChangeText={(value) => setInputValue(i, value)}
           value={refInputs.current[i]}
           placeholder="Article"
+          placeholderTextColor="#999999"
           style={styles.articlesInput}
         />
         {/* Supprimer l'input */}
         <TouchableOpacity onPress={() => removeInput(i)}>
-          <FontAwesome name="trash" size={20} />
+          <FontAwesome name="trash" size={25} color="#002654" />
         </TouchableOpacity>
       </View>
     );
   }
+
+  // Ajout des articles au reducer //
 
   const handleAddArticles = (category) => {
     const filteredArticles = refInputs.current.filter((x) => x.length > 0);
@@ -132,8 +140,6 @@ export default function SectionsScreen({ navigation }) {
     handleCloseModalArticles();
   };
 
-  console.log(currentList.categories);
-
   // Afficher les rayons de la liste en cours de création //
 
   let viewSections = [];
@@ -143,13 +149,13 @@ export default function SectionsScreen({ navigation }) {
         return (
           <View key={i} style={styles.sectionContainer}>
             <View style={styles.head}>
-              <Text>{categoryData.name}</Text>
+              <Text style={styles.categoryText}>{categoryData.name}</Text>
               <TouchableOpacity
                 onPress={() => {
                   handleDelete(categoryData.name);
                 }}
               >
-                <FontAwesome name="minus-circle" size={20} />
+                <FontAwesome name="minus-circle" color="#002654" size={20} />
               </TouchableOpacity>
             </View>
             <TouchableOpacity
@@ -185,6 +191,21 @@ export default function SectionsScreen({ navigation }) {
     setModalQuitVisible(true);
   };
 
+  // Valider la liste et envoi en BDD + envoi au reducer user + vider le reducer currentList //
+
+  const handleSaveList = (currentList) => {
+    fetch("http://10.2.1.246:3000/lists/add", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        token: "testToken",
+        list: currentList,
+      }),
+    }).then((response) => response.json());
+    dispatch(addList(currentList));
+    handleQuit();
+  };
+
   // Return du screen //
 
   return (
@@ -193,17 +214,16 @@ export default function SectionsScreen({ navigation }) {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <TouchableOpacity
+              style={styles.xModal}
               onPress={() => handleCloseModalCategory()}
               activeOpacity={0.8}
             >
-              <FontAwesome
-                style={styles.xModal}
-                name="close"
-                size={20}
-              ></FontAwesome>
+              <FontAwesome name="close" color="#002654" size={20}></FontAwesome>
             </TouchableOpacity>
             <TextInput
+              style={styles.input}
               placeholder="Nommez votre rayon"
+              placeholderTextColor="#999999"
               onChangeText={(value) => setNewCatName(value)}
               value={newCatName}
             />
@@ -223,18 +243,18 @@ export default function SectionsScreen({ navigation }) {
             <TouchableOpacity
               onPress={() => handleCloseModalArticles()}
               activeOpacity={0.8}
-            >
-              <FontAwesome
-                style={styles.xModal}
-                name="close"
-                size={20}
-              ></FontAwesome>
-            </TouchableOpacity>
+            ></TouchableOpacity>
             <Text style={styles.openedCat}>{catOpened}</Text>
             <KeyboardAwareScrollView>
               {inputs}
               <TouchableOpacity style={styles.addArticle} onPress={addInput}>
-                <Text>+ Ajoutez un nouvel article</Text>
+                <FontAwesome
+                  style={styles.addArticleInput}
+                  name="plus-circle"
+                  color="#002654"
+                  size={20}
+                ></FontAwesome>
+                <Text> Ajoutez un nouvel article</Text>
               </TouchableOpacity>
             </KeyboardAwareScrollView>
             <TouchableOpacity
@@ -274,19 +294,20 @@ export default function SectionsScreen({ navigation }) {
       <SafeAreaView style={styles.safeAreaViewContainer}>
         <View style={styles.globalViewContainer}>
           <View style={styles.header}>
-            <FontAwesome
-              name="chevron-left"
-              size={30}
-              onPress={() => handleWishQuit()}
-            />
-            <Text style={styles.title}>{listName}</Text>
+            <TouchableOpacity onPress={() => handleWishQuit()}>
+              <FontAwesome name="chevron-left" color="#002654" size={30} />
+            </TouchableOpacity>
+            <View style={styles.title}>
+              <Text style={styles.titleText}>{listName}</Text>
+            </View>
           </View>
-          <Text>Préparez votre liste par rayon</Text>
+          <Text style={styles.subtitle}>Préparez votre liste par rayon</Text>
           <KeyboardAwareScrollView contentContainerStyle={styles.sections}>
             {viewSections}
             <View style={styles.add}>
               <FontAwesome
                 name="plus-circle"
+                color="#002654"
                 size={90}
                 onPress={() => {
                   handleOpenModalCategory();
@@ -294,6 +315,13 @@ export default function SectionsScreen({ navigation }) {
               ></FontAwesome>
             </View>
           </KeyboardAwareScrollView>
+          <TouchableOpacity
+            onPress={() => handleSaveList(currentList)}
+            style={styles.button}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.textButton}>Valider la liste</Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     </View>
@@ -343,9 +371,21 @@ const makeStyles = (height, width, fontScale) => {
       marginBottom: normalize(30),
     },
     title: {
-      width: normalize(290),
-      marginLeft: normalize(50),
-      fontSize: normalize(25),
+      alignItems: "center",
+      width: normalize(305),
+    },
+    titleText: {
+      fontWeight: "bold",
+      fontSize: normalize(17),
+    },
+    subtitle: {
+      fontSize: normalize(18),
+      fontWeight: "bold",
+      marginBottom: normalize(10),
+    },
+    categoryText: {
+      fontSize: normalize(15),
+      fontWeight: "bold",
     },
     sections: {
       margin: normalize(10),
@@ -354,14 +394,15 @@ const makeStyles = (height, width, fontScale) => {
       justifyContent: "center",
     },
     sectionContainer: {
-      margin: normalize(10),
+      margin: normalize(7),
     },
     picture: {
+      borderRadius: normalize(10),
       width: normalize(150),
       height: normalize(150),
     },
     head: {
-      paddingVertical: normalize(5),
+      paddingBottom: normalize(5),
       flexDirection: "row",
       justifyContent: "space-between",
     },
@@ -377,7 +418,17 @@ const makeStyles = (height, width, fontScale) => {
       justifyContent: "center",
       alignItems: "center",
     },
+    input: {
+      fontSize: normalize(20),
+      marginTop: normalize(20),
+      flexDirection: "row",
+      justifyContent: "flex-start",
+      backgroundColor: "#ffffff",
+      borderRadius: normalize(10),
+    },
     modalView: {
+      height: normalize(180),
+      width: normalize(250),
       backgroundColor: "white",
       borderRadius: normalize(20),
       padding: normalize(20),
@@ -450,15 +501,23 @@ const makeStyles = (height, width, fontScale) => {
       fontSize: normalize(15),
     },
     xModal: {
-      marginBottom: normalize(15),
+      width: normalize(220),
+      alignItems: "flex-end",
     },
     openedCat: {
+      fontSize: normalize(17),
+      fontWeight: "bold",
       marginBottom: normalize(20),
     },
+    addArticleInput: {
+      marginBottom: normalize(10),
+    },
+
     articlesCard: {
       width: normalize(330),
       flexDirection: "row",
       justifyContent: "space-around",
+      alignItems: "center",
       marginVertical: normalize(5),
     },
     articlesInput: {
@@ -466,7 +525,7 @@ const makeStyles = (height, width, fontScale) => {
       width: normalize(280),
       borderWidth: normalize(1),
       borderRadius: normalize(5),
-      borderColor: "black",
+      borderColor: "#002654",
       alignItems: "flex-start",
       justifyContent: "center",
       paddingHorizontal: normalize(10),
@@ -480,6 +539,7 @@ const makeStyles = (height, width, fontScale) => {
       marginBottom: normalize(20),
     },
     advertisement: {
+      fontSize: normalize(16),
       textAlign: "center",
     },
   });
