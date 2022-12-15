@@ -22,7 +22,7 @@ export default function ListsScreen({ navigation }) {
   const [newListName, setNewListName] = useState("");
   const user = useSelector((state: { user: UserState }) => state.user.value);
 
-  // A enlever : supprimer toutes les listes pour test //
+  // A enlever : supprimer toutes les listes du reducer user pour test //
 
   const handleEmptyLists = () => {
     dispatch(emptyLists());
@@ -31,26 +31,44 @@ export default function ListsScreen({ navigation }) {
   // Ajouter une nouvelle liste au reducer currentList //
 
   const handleNewList = () => {
-    const date = new Date();
-    const listData = {
-      name: newListName,
-      date: date.toLocaleDateString("fr"),
-      active: true,
-      categories: [
-        {
-          name: "Fruits et légumes",
-          image: "../assets/lists/rayon.png",
-          items: [],
-        },
-        { name: "Viandes", image: "../assets/lists/rayon.png", items: [] },
-        { name: "Poissons", image: "../assets/lists/rayon.png", items: [] },
-        { name: "Epicerie", image: "../assets/lists/rayon.png", items: [] },
-        { name: "Desserts", image: "../assets/lists/rayon.png", items: [] },
-      ],
-    };
-    dispatch(addCurrentList(listData));
-    navigation.navigate("Sections");
-    setNewListName("");
+    if (newListName) {
+      const date = new Date();
+      const listData = {
+        name: newListName,
+        date: date.toLocaleDateString("fr"),
+        active: true,
+        categories: [
+          {
+            name: "Fruits et légumes",
+            image: require("../../assets/lists/legumes.png"),
+            items: [],
+          },
+          {
+            name: "Viandes",
+            image: require("../../assets/lists/viandes.jpg"),
+            items: [],
+          },
+          {
+            name: "Poissons",
+            image: require("../../assets/lists/poissons.png"),
+            items: [],
+          },
+          {
+            name: "Epicerie",
+            image: require("../../assets/lists/epicerie.jpeg"),
+            items: [],
+          },
+          {
+            name: "Desserts",
+            image: require("../../assets/lists/desserts.png"),
+            items: [],
+          },
+        ],
+      };
+      dispatch(addCurrentList(listData));
+      navigation.navigate("Sections");
+      setNewListName("");
+    }
   };
 
   // Afficher les listes en cours et archivées depuis le reducer user//

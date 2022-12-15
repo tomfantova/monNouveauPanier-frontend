@@ -49,13 +49,15 @@ export default function SectionsScreen({ navigation }) {
 
   const newCat = {
     name: newCatName,
-    image: "../../assets/lists/rayon.png",
+    image: require("../../assets/lists/rayon.png"),
     items: [],
   };
 
   const handleAddCat = () => {
-    dispatch(addCategory(newCat));
-    handleCloseModalCategory();
+    if (newCatName) {
+      dispatch(addCategory(newCat));
+      handleCloseModalCategory();
+    }
   };
 
   // Supprimer un rayon //
@@ -163,10 +165,7 @@ export default function SectionsScreen({ navigation }) {
                 handleOpenmodalArticles(categoryData.name, categoryData.items);
               }}
             >
-              <Image
-                source={require("../../assets/lists/rayon.png")}
-                style={styles.picture}
-              />
+              <Image source={categoryData.image} style={styles.picture} />
             </TouchableOpacity>
           </View>
         );
