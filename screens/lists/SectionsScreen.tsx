@@ -47,9 +47,36 @@ export default function SectionsScreen({ navigation }) {
     setNewCatName("");
   };
 
+  let image: any = "";
+  const removeAccents = newCatName
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+  const vege = /legume/i;
+  const fruit = /fruit/i;
+  const meat = /viande/i;
+  const fish = /poisson/i;
+  const grocery = /epice/i;
+  const desert = /dessert/i;
+
+  if (vege.test(removeAccents)) {
+    image = "legumes.png";
+  } else if (fruit.test(removeAccents)) {
+    image = "legumes.png";
+  } else if (meat.test(removeAccents)) {
+    image = "viandes.jpg";
+  } else if (fish.test(removeAccents)) {
+    image = "poissons.png";
+  } else if (grocery.test(removeAccents)) {
+    image = "epicerie.jpeg";
+  } else if (desert.test(removeAccents)) {
+    image = "desserts.png";
+  } else {
+    image = "rayon.png";
+  }
+
   const newCat = {
     name: newCatName,
-    image: require("../../assets/lists/rayon.png"),
+    image: image,
     items: [],
   };
 
@@ -74,7 +101,7 @@ export default function SectionsScreen({ navigation }) {
     if (items.length) {
       setNumInputs(items.length);
       for (let item of items) {
-        refInputs.current.push(item);
+        refInputs.current.push(item.name);
       }
       refInputs.current.shift();
     }
@@ -111,6 +138,9 @@ export default function SectionsScreen({ navigation }) {
   for (let i = 0; i < numInputs; i++) {
     inputs.push(
       <View style={styles.articlesCard} key={i}>
+        <TouchableOpacity activeOpacity={0.8}>
+          <FontAwesome name="info-circle" size={25} color="#002654" />
+        </TouchableOpacity>
         <TextInput
           onChangeText={(value) => setInputValue(i, value)}
           value={refInputs.current[i]}
@@ -132,9 +162,11 @@ export default function SectionsScreen({ navigation }) {
     const filteredArticles = refInputs.current.filter((x) => x.length > 0);
     for (let item of currentList.categories) {
       if (category === item.name) {
-        dispatch(
-          addArticles({ categoryName: category, items: filteredArticles })
-        );
+        let articles = [];
+        for (let article of filteredArticles) {
+          articles.push({ name: article, active: true });
+        }
+        dispatch(addArticles({ categoryName: category, items: articles }));
       }
     }
     refInputs.current = [""];
@@ -146,31 +178,64 @@ export default function SectionsScreen({ navigation }) {
 
   let viewSections = [];
   if (currentList) {
-    viewSections = currentList.categories.map(
-      (categoryData: any, i: number) => {
-        return (
-          <View key={i} style={styles.sectionContainer}>
-            <View style={styles.head}>
-              <Text style={styles.categoryText}>{categoryData.name}</Text>
-              <TouchableOpacity
-                onPress={() => {
-                  handleDelete(categoryData.name);
-                }}
-              >
-                <FontAwesome name="minus-circle" color="#002654" size={20} />
-              </TouchableOpacity>
-            </View>
+    viewSections = currentList.categories.map((categoryData, i) => {
+      //
+      // // Gestion des images (require ne prend que les Strings en dur)
+
+      const legume = require("../../assets/lists/legumes.png");
+      const viande = require("../../assets/lists/viandes.jpg");
+      const poisson = require("../../assets/lists/poissons.png");
+      const epicerie = require("../../assets/lists/epicerie.jpeg");
+      const dessert = require("../../assets/lists/desserts.png");
+      const rayon = require("../../assets/lists/rayon.png");
+      let image = {};
+      switch (categoryData.image) {
+        case "legumes.png":
+          image = legume;
+          break;
+        case "viandes.jpg":
+          image = viande;
+          break;
+        case "poissons.png":
+          image = poisson;
+          break;
+        case "epicerie.jpeg":
+          image = epicerie;
+          break;
+        case "desserts.png":
+          image = dessert;
+          break;
+        default:
+          image = rayon;
+      }
+      //
+      // // Return du map
+      return (
+        <View key={i} style={styles.sectionContainer}>
+          <View style={styles.head}>
+            <Text style={styles.categoryText}>{categoryData.name}</Text>
             <TouchableOpacity
               onPress={() => {
-                handleOpenmodalArticles(categoryData.name, categoryData.items);
+                handleDelete(categoryData.name);
               }}
             >
-              <Image source={categoryData.image} style={styles.picture} />
+              <FontAwesome name="minus-circle" color="#002654" size={20} />
             </TouchableOpacity>
           </View>
-        );
-      }
-    );
+          <TouchableOpacity
+            onPress={() => {
+              handleOpenmodalArticles(categoryData.name, categoryData.items);
+            }}
+          >
+            <Image
+              source={image}
+              defaultSource={image}
+              style={styles.picture}
+            />
+          </TouchableOpacity>
+        </View>
+      );
+    });
   }
 
   // Retour arrière et effacer la liste en cours de création, dont modale //
@@ -239,10 +304,6 @@ export default function SectionsScreen({ navigation }) {
       <Modal visible={modalArticlesVisible} animationType="fade" transparent>
         <View style={styles.centeredView2}>
           <View style={styles.modalView2}>
-            <TouchableOpacity
-              onPress={() => handleCloseModalArticles()}
-              activeOpacity={0.8}
-            ></TouchableOpacity>
             <Text style={styles.openedCat}>{catOpened}</Text>
             <KeyboardAwareScrollView>
               {inputs}
@@ -521,13 +582,14 @@ const makeStyles = (height, width, fontScale) => {
     },
     articlesInput: {
       height: normalize(30),
-      width: normalize(280),
+      width: normalize(250),
       borderWidth: normalize(1),
       borderRadius: normalize(5),
       borderColor: "#002654",
       alignItems: "flex-start",
       justifyContent: "center",
       paddingHorizontal: normalize(10),
+      marginHorizontal: normalize(15),
     },
     addArticle: {
       margin: normalize(20),

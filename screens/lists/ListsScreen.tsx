@@ -13,6 +13,10 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useDispatch, useSelector } from "react-redux";
 import { emptyLists } from "../../reducers/user";
+import {
+  addExecutedList,
+  removeExecutedList,
+} from "../../reducers/executedList";
 import { addCurrentList, UserState } from "../../reducers/currentList";
 
 export default function ListsScreen({ navigation }) {
@@ -21,12 +25,14 @@ export default function ListsScreen({ navigation }) {
   const dispatch = useDispatch();
   const [newListName, setNewListName] = useState("");
   const user = useSelector((state: { user: UserState }) => state.user.value);
+  const executedList = useSelector(
+    (state: { executedList: UserState }) => state.executedList.value
+  );
 
   // A enlever : supprimer toutes les listes du reducer user pour test //
 
-  const handleEmptyLists = () => {
-    dispatch(emptyLists());
-  };
+  // dispatch(emptyLists());
+  // dispatch(removeExecutedList());
 
   // Ajouter une nouvelle liste au reducer currentList //
 
@@ -34,33 +40,34 @@ export default function ListsScreen({ navigation }) {
     if (newListName) {
       const date = new Date();
       const listData = {
+        id: Date.now(),
         name: newListName,
         date: date.toLocaleDateString("fr"),
         active: true,
         categories: [
           {
             name: "Fruits et légumes",
-            image: require("../../assets/lists/legumes.png"),
+            image: "legumes.png",
             items: [],
           },
           {
             name: "Viandes",
-            image: require("../../assets/lists/viandes.jpg"),
+            image: "viandes.jpg",
             items: [],
           },
           {
             name: "Poissons",
-            image: require("../../assets/lists/poissons.png"),
+            image: "poissons.png",
             items: [],
           },
           {
             name: "Epicerie",
-            image: require("../../assets/lists/epicerie.jpeg"),
+            image: "epicerie.jpeg",
             items: [],
           },
           {
             name: "Desserts",
-            image: require("../../assets/lists/desserts.png"),
+            image: "desserts.png",
             items: [],
           },
         ],
@@ -73,33 +80,79 @@ export default function ListsScreen({ navigation }) {
 
   // Afficher les listes en cours et archivées depuis le reducer user//
 
-  const actives = user.lists.map((listsData, i) => {
-    if (listsData.active)
-      return (
-        <View key={i} style={styles.card}>
-          <TouchableOpacity style={styles.button} activeOpacity={0.8}>
-            <Text style={styles.textButton}>
-              {listsData.name} le {listsData.date}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      );
-  });
+  let actives: JSX.Element[] | JSX.Element = [];
+  if (!user.lists.length || user.lists.every((e) => !e.active)) {
+    actives = (
+      <View>
+        <Text style={styles.noList}>Vous n'avez pas encore de listes</Text>
+      </View>
+    );
+  } else {
+    actives = user.lists
+      .filter((e) => e.active)
+      .map((listsData, i) => {
+        return (
+          <View key={i} style={styles.card}>
+            <TouchableOpacity
+              style={styles.button}
+              activeOpacity={0.8}
+              onPress={() => handleStart(listsData)}
+            >
+              <Text style={styles.textButton}>{listsData.name}</Text>
+              <Text style={styles.textDate}>Créée le {listsData.date}</Text>
+            </TouchableOpacity>
+          </View>
+        );
+      })
+      .reverse();
+  }
 
-  const inactives = user.lists.map((listsData, i) => {
-    if (!listsData.active)
-      return (
-        <View key={i} style={styles.card}>
-          <TouchableOpacity style={styles.button} activeOpacity={0.8}>
-            <Text style={styles.textButton}>
-              {listsData.name} le {listsData.date}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      );
-  });
+  let inactives: JSX.Element[] | JSX.Element = [];
+  if (!user.lists.length || user.lists.every((e) => e.active)) {
+    inactives = (
+      <View>
+        <Text style={styles.noList}>Vous n'avez pas archivé de listes</Text>
+      </View>
+    );
+  } else {
+    inactives = user.lists
+      .filter((e) => !e.active)
+      .map((listsData, i) => {
+        return (
+          <View key={i} style={styles.card}>
+            <TouchableOpacity
+              onPress={() => handleConsult(listsData)}
+              style={styles.button}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.textButton}>{listsData.name}</Text>
+              <Text style={styles.textDate}>Archivée le {listsData.date}</Text>
+            </TouchableOpacity>
+          </View>
+        );
+      })
+      .reverse();
+  }
 
-  // Listes archivées //
+  // Lancer l'exécution d'une liste //
+
+  const handleStart = (list) => {
+    if (executedList === null || executedList.id !== list.id) {
+      dispatch(removeExecutedList());
+      dispatch(addExecutedList(list));
+    }
+    navigation.navigate("Executed");
+  };
+
+  // Affichage d'une liste archivée
+
+  const handleConsult = (list) => {
+    if (executedList === null || executedList.id !== list.id) {
+      dispatch(removeExecutedList());
+      dispatch(addExecutedList(list));
+    }
+    navigation.navigate("Archive");
+  };
 
   // Return du screen //
 
@@ -192,13 +245,13 @@ const makeStyles = (height, width, fontScale) => {
       borderBottomColor: "#002654",
     },
     listsText: {
-      marginTop: normalize(50),
+      marginTop: normalize(5),
       alignSelf: "flex-start",
       fontSize: normalize(18),
     },
     lists: {
       marginTop: normalize(5),
-      paddingTop: normalize(20),
+      marginBottom: normalize(20),
       alignSelf: "flex-start",
     },
     card: {
@@ -220,8 +273,17 @@ const makeStyles = (height, width, fontScale) => {
       fontWeight: "600",
       fontSize: normalize(15),
     },
+    textDate: {
+      color: "#002654",
+      fontSize: normalize(13),
+      paddingBottom: normalize(5),
+    },
     regularText: {
       fontSize: normalize(18),
+    },
+    noList: {
+      marginVertical: normalize(20),
+      fontSize: normalize(16),
     },
   });
 };

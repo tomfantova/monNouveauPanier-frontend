@@ -1,17 +1,25 @@
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native'
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 
 import { Provider } from "react-redux";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import user from "./reducers/user";
 import currentList from "./reducers/currentList";
+import executedList from "./reducers/executedList";
 
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const reducers = combineReducers({ user, currentList });
+const reducers = combineReducers({ user, currentList, executedList });
 const persistConfig = { key: "monnouveaupanier", storage: AsyncStorage };
 
 const store = configureStore({
@@ -32,13 +40,14 @@ import BookmarksScreen from "./screens/bookmarks/BookmarksScreen";
 import OffersScreen from "./screens/offers/OffersScreen";
 import ListsScreen from "./screens/lists/ListsScreen";
 import SectionsScreen from "./screens/lists/SectionsScreen";
+import ExecutedScreen from "./screens/lists/ExecutedScreen";
+import ArchiveScreen from "./screens/lists/ArchiveScreen";
 
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default function App() {
-
   const { height, width, fontScale } = useWindowDimensions();
-  const styles = makeStyles(height, width, fontScale)
+  const styles = makeStyles(height, width, fontScale);
 
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
@@ -54,13 +63,16 @@ export default function App() {
         <View style={styles.headerItemContainer}>
           <Image
             style={styles.headerLogoImage}
-            source={require('./assets/logo/logo-transparent.png')}
+            source={require("./assets/logo/logo-transparent.png")}
           />
           <Text style={styles.headerLogoName}>Mon Nouveau Panier</Text>
         </View>
         <View style={styles.headerItemContainer}>
           <TouchableOpacity style={styles.headerProfileButton}>
-            <Image style={styles.headerProfileImage} source={require('./assets/avatars/type2.png')} />
+            <Image
+              style={styles.headerProfileImage}
+              source={require("./assets/avatars/type2.png")}
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -74,23 +86,29 @@ export default function App() {
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size }) => {
             let iconName: string = "";
-            let customSize: number = 0
+            let customSize: number = 0;
 
             if (route.name === "Guides") {
               iconName = "book-search"; // image-search note-search file-search database-search clipboard-text-search text-box-search tag-search book-search book-search-outline bookmark-box-multiple-outline
-              customSize = size * 1.16
+              customSize = size * 1.16;
             } else if (route.name === "Bookmarks") {
               iconName = "star"; // star star-outline star-half-full
-              customSize = size * 1.2
+              customSize = size * 1.2;
             } else if (route.name === "Offers") {
-              iconName = "store";  // storefront-plus handshake cart-heart hand-heart-outline store-clock store-check store-marker store-plus basket-plus-outline
-              customSize = size * 1.2
+              iconName = "store"; // storefront-plus handshake cart-heart hand-heart-outline store-clock store-check store-marker store-plus basket-plus-outline
+              customSize = size * 1.2;
             } else if (route.name === "Lists") {
               iconName = "playlist-edit";
-              customSize = size * 1.4
+              customSize = size * 1.4;
             }
 
-            return <MaterialCommunityIcon name={iconName} color={color} size={customSize} />;
+            return (
+              <MaterialCommunityIcon
+                name={iconName}
+                color={color}
+                size={customSize}
+              />
+            );
           },
           tabBarActiveTintColor: "#F1A100",
           tabBarInactiveTintColor: "#AFAFAF",
@@ -100,11 +118,26 @@ export default function App() {
         <Tab.Screen
           name="Guides"
           component={GuidesScreen}
-          options={{ title: 'Guides', headerTitle: (props: any) => <LogoTitle {...props} /> }}
+          options={{
+            title: "Guides",
+            headerTitle: (props: any) => <LogoTitle {...props} />,
+          }}
         />
-        <Tab.Screen name="Bookmarks" component={BookmarksScreen} options={{ title: 'Favoris' }} />
-        <Tab.Screen name="Offers" component={OffersScreen} options={{ title: 'Offres' }} />
-        <Tab.Screen name="Lists" component={ListsScreen} options={{ title: 'Listes' }} />
+        <Tab.Screen
+          name="Bookmarks"
+          component={BookmarksScreen}
+          options={{ title: "Favoris" }}
+        />
+        <Tab.Screen
+          name="Offers"
+          component={OffersScreen}
+          options={{ title: "Offres" }}
+        />
+        <Tab.Screen
+          name="Lists"
+          component={ListsScreen}
+          options={{ title: "Listes" }}
+        />
       </Tab.Navigator>
     );
   };
@@ -122,6 +155,8 @@ export default function App() {
             <Stack.Screen name="Bienvenue" component={WelcomeScreen} />
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
             <Stack.Screen name="Sections" component={SectionsScreen} />
+            <Stack.Screen name="Executed" component={ExecutedScreen} />
+            <Stack.Screen name="Archive" component={ArchiveScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </PersistGate>
@@ -130,34 +165,33 @@ export default function App() {
 }
 
 const makeStyles = (height: number, width: number, fontScale: number) => {
-
   const adaptToHeight = (size: number) => {
-      return ((height * size) / 844) / fontScale
-  }
+    return (height * size) / 844 / fontScale;
+  };
 
   const normalize = (size: number) => {
-      return ((width * size) / 390) / fontScale
-  }
+    return (width * size) / 390 / fontScale;
+  };
 
   return StyleSheet.create({
     headerContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      width: '100%',
+      flexDirection: "row",
+      justifyContent: "space-between",
+      width: "100%",
     },
     headerItemContainer: {
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: "center",
+      alignItems: "center",
       marginBottom: 6,
     },
     headerMenuButton: {
       height: 38,
       width: 38,
-      borderColor: '#AFAFAF',
+      borderColor: "#AFAFAF",
       borderRadius: 10,
       borderWidth: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: "center",
+      alignItems: "center",
     },
     headerLogoImage: {
       height: 32,
@@ -165,25 +199,24 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       marginBottom: 2,
     },
     headerLogoName: {
-      textAlign: 'center',
-      color: '#DAAC3C',
+      textAlign: "center",
+      color: "#DAAC3C",
       fontSize: 9,
-      fontWeight: '500',
+      fontWeight: "500",
     },
     headerProfileButton: {
       height: 38,
       width: 38,
-      borderColor: '#AFAFAF',
-      backgroundColor: '#EFEFEF',
+      borderColor: "#AFAFAF",
+      backgroundColor: "#EFEFEF",
       borderRadius: 50,
       borderWidth: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: "center",
+      alignItems: "center",
     },
     headerProfileImage: {
-      height: '150%',
-      width: '150%',
+      height: "150%",
+      width: "150%",
     },
-  })
-
-}
+  });
+};

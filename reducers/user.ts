@@ -50,8 +50,16 @@ export const userSlice = createSlice({
     emptyLists: (state) => {
       state.value.lists = [];
     },
+    archiveList: (state, action: PayloadAction<any>) => {
+      const targetIndex: number = state.value.lists
+        .map((e: any) => e.id)
+        .indexOf(action.payload.id);
+      state.value.lists[targetIndex].active = false;
+      state.value.lists[targetIndex].date = action.payload.date;
+    },
   },
 });
 
-export const { connectUser, addList, emptyLists } = userSlice.actions;
+export const { connectUser, addList, emptyLists, archiveList } =
+  userSlice.actions;
 export default userSlice.reducer;
