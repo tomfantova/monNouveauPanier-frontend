@@ -192,11 +192,11 @@ export default function ListsScreen({ navigation }) {
 }
 
 const makeStyles = (height, width, fontScale) => {
-  const adaptToHeight = (size) => {
-    return (height * size) / 844 / fontScale;
+  const adaptToWidth = (size: number) => {
+    return (width * size) / 390;
   };
 
-  const normalize = (size) => {
+  const normalizeText = (size: number) => {
     return (width * size) / 390 / fontScale;
   };
 
@@ -220,11 +220,11 @@ const makeStyles = (height, width, fontScale) => {
       alignItems: "center",
       height: "100%",
       width: "100%",
-      paddingHorizontal: normalize(20),
-      paddingVertical: normalize(20),
+      paddingHorizontal: adaptToWidth(20),
+      paddingVertical: adaptToWidth(20),
     },
     addList: {
-      marginVertical: normalize(20),
+      marginVertical: adaptToWidth(20),
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
@@ -234,56 +234,57 @@ const makeStyles = (height, width, fontScale) => {
       alignItems: "center",
       width: "80%",
       backgroundColor: "#ffffff",
-      padding: normalize(20),
-      marginRight: normalize(20),
-      borderRadius: normalize(10),
+      fontSize: normalizeText(16),
+      padding: adaptToWidth(20),
+      marginRight: adaptToWidth(20),
+      borderRadius: adaptToWidth(10),
     },
     listsTitle: {
-      width: normalize(330),
-      paddingBottom: normalize(5),
+      width: adaptToWidth(330),
+      paddingBottom: adaptToWidth(5),
       borderBottomWidth: 2,
       borderBottomColor: "#002654",
     },
     listsText: {
-      marginTop: normalize(5),
+      marginTop: adaptToWidth(5),
       alignSelf: "flex-start",
-      fontSize: normalize(18),
+      fontSize: normalizeText(18),
     },
     lists: {
-      marginTop: normalize(5),
-      marginBottom: normalize(20),
+      marginTop: adaptToWidth(5),
+      marginBottom: adaptToWidth(20),
       alignSelf: "flex-start",
     },
     card: {
-      width: normalize(330),
+      width: adaptToWidth(330),
       justifyContent: "center",
       alignItems: "center",
     },
     button: {
-      width: normalize(300),
+      width: adaptToWidth(300),
       alignItems: "center",
-      marginTop: normalize(20),
-      paddingTop: normalize(8),
+      marginTop: adaptToWidth(20),
+      paddingTop: adaptToWidth(8),
       backgroundColor: "#F1A100",
-      borderRadius: normalize(10),
+      borderRadius: adaptToWidth(10),
     },
     textButton: {
       color: "black",
-      height: normalize(24),
+      height: adaptToWidth(24),
       fontWeight: "600",
-      fontSize: normalize(15),
+      fontSize: normalizeText(15),
     },
     textDate: {
       color: "#002654",
-      fontSize: normalize(13),
-      paddingBottom: normalize(5),
+      fontSize: normalizeText(13),
+      paddingBottom: adaptToWidth(5),
     },
     regularText: {
-      fontSize: normalize(18),
+      fontSize: normalizeText(18),
     },
     noList: {
-      marginVertical: normalize(20),
-      fontSize: normalize(16),
+      marginVertical: adaptToWidth(20),
+      fontSize: normalizeText(16),
     },
   });
 };

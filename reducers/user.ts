@@ -50,16 +50,27 @@ export const userSlice = createSlice({
     emptyLists: (state) => {
       state.value.lists = [];
     },
-    archiveList: (state, action: PayloadAction<any>) => {
+    changeListStatus: (state, action: PayloadAction<any>) => {
       const targetIndex: number = state.value.lists
         .map((e: any) => e.id)
         .indexOf(action.payload.id);
-      state.value.lists[targetIndex].active = false;
+      state.value.lists[targetIndex].active =
+        !state.value.lists[targetIndex].active;
       state.value.lists[targetIndex].date = action.payload.date;
+    },
+    deleteList: (state, action: PayloadAction<any>) => {
+      state.value.lists = state.value.lists.filter(
+        (e) => e.id !== action.payload
+      );
     },
   },
 });
 
-export const { connectUser, addList, emptyLists, archiveList } =
-  userSlice.actions;
+export const {
+  connectUser,
+  addList,
+  emptyLists,
+  changeListStatus,
+  deleteList,
+} = userSlice.actions;
 export default userSlice.reducer;
