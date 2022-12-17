@@ -20,13 +20,17 @@ export default function WelcomeScreen({ navigation }) {
     )
 }
 
-const makeStyles = (height, width, fontScale) => {
+const makeStyles = (height: number, width: number, fontScale: number) => {
 
-    const adaptToHeight = size => {
+    const adaptToHeight = (size: number) => {
         return ((height * size) / 844) / fontScale
     }
 
-    const normalize = size => {
+    const adaptToWidth = (size: number) => {
+        return ((width * size) / 390)
+    }
+
+    const normalizeText = (size: number) => {
         return ((width * size) / 390) / fontScale
     }
 
@@ -51,8 +55,8 @@ const makeStyles = (height, width, fontScale) => {
             justifyContent: 'center',
             height: '100%',
             width: '100%',
-            paddingHorizontal: normalize(20),
-            paddingVertical: normalize(20),
+            paddingHorizontal: adaptToWidth(20),
+            paddingVertical: adaptToWidth(20),
         },
     })
 

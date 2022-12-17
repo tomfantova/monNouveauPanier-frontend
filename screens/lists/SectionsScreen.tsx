@@ -236,14 +236,18 @@ export default function SectionsScreen({ navigation }) {
 
 // Style du screen //
 
-const makeStyles = (height, width, fontScale) => {
-  const adaptToHeight = (size) => {
-    return (height * size) / 844 / fontScale;
-  };
+const makeStyles = (height: number, width: number, fontScale: number) => {
+  const adaptToHeight = (size: number) => {
+    return ((height * size) / 844) / fontScale
+  }
 
-  const normalize = (size) => {
-    return (width * size) / 390 / fontScale;
-  };
+  const adaptToWidth = (size: number) => {
+    return ((width * size) / 390)
+  }
+
+  const normalizeText = (size: number) => {
+    return ((width * size) / 390) / fontScale
+  }
 
   return StyleSheet.create({
     backgroundView: {
@@ -266,45 +270,45 @@ const makeStyles = (height, width, fontScale) => {
       justifyContent: "center",
       height: "100%",
       width: "100%",
-      paddingHorizontal: normalize(5),
-      paddingVertical: normalize(20),
+      paddingHorizontal: adaptToWidth(5),
+      paddingVertical: adaptToWidth(20),
     },
     header: {
       flexDirection: "row",
       alignItems: "center",
-      width: normalize(350),
+      width: adaptToWidth(350),
       justifyContent: "flex-start",
-      marginBottom: normalize(30),
+      marginBottom: adaptToWidth(30),
     },
     title: {
-      width: normalize(290),
-      marginLeft: normalize(50),
-      fontSize: normalize(25),
+      width: adaptToWidth(290),
+      marginLeft: adaptToWidth(50),
+      fontSize: normalizeText(25),
     },
     sections: {
-      margin: normalize(10),
+      margin: adaptToWidth(10),
       flexWrap: "wrap",
       flexDirection: "row",
       justifyContent: "center",
     },
     sectionContainer: {
-      margin: normalize(10),
+      margin: adaptToWidth(10),
     },
     picture: {
-      width: normalize(150),
-      height: normalize(150),
+      width: adaptToWidth(150),
+      height: adaptToWidth(150),
     },
     head: {
-      paddingVertical: normalize(5),
+      paddingVertical: adaptToWidth(5),
       flexDirection: "row",
       justifyContent: "space-between",
     },
     add: {
       alignItems: "center",
       justifyContent: "center",
-      margin: normalize(10),
-      width: normalize(150),
-      height: normalize(180),
+      margin: adaptToWidth(10),
+      width: adaptToWidth(150),
+      height: adaptToWidth(180),
     },
     centeredView: {
       flex: 1,
@@ -313,13 +317,13 @@ const makeStyles = (height, width, fontScale) => {
     },
     modalView: {
       backgroundColor: "white",
-      borderRadius: normalize(20),
-      padding: normalize(20),
+      borderRadius: adaptToWidth(20),
+      padding: adaptToWidth(20),
       alignItems: "center",
       shadowColor: "black",
       shadowOffset: {
-        width: normalize(10),
-        height: normalize(10),
+        width: adaptToWidth(10),
+        height: adaptToWidth(10),
       },
       shadowOpacity: 0.5,
       shadowRadius: 4,
@@ -329,58 +333,58 @@ const makeStyles = (height, width, fontScale) => {
       flex: 1,
       justifyContent: "flex-end",
       alignItems: "center",
-      marginBottom: normalize(55),
+      marginBottom: adaptToWidth(55),
     },
     modalView2: {
-      height: normalize(660),
-      width: normalize(380),
+      height: adaptToWidth(660),
+      width: adaptToWidth(380),
       backgroundColor: "white",
-      borderRadius: normalize(20),
-      padding: normalize(20),
+      borderRadius: adaptToWidth(20),
+      padding: adaptToWidth(20),
       alignItems: "center",
       shadowColor: "black",
       shadowOffset: {
-        width: normalize(10),
-        height: normalize(10),
+        width: adaptToWidth(10),
+        height: adaptToWidth(10),
       },
       shadowOpacity: 0.5,
       shadowRadius: 4,
       elevation: 5,
     },
     button: {
-      width: normalize(150),
+      width: adaptToWidth(150),
       alignItems: "center",
-      marginTop: normalize(20),
-      paddingTop: normalize(8),
+      marginTop: adaptToWidth(20),
+      paddingTop: adaptToWidth(8),
       backgroundColor: "#F1A100",
-      borderRadius: normalize(10),
+      borderRadius: adaptToWidth(10),
     },
     textButton: {
       color: "black",
-      height: normalize(24),
+      height: adaptToWidth(24),
       fontWeight: "600",
-      fontSize: normalize(15),
+      fontSize: normalizeText(15),
     },
     xModal: {
-      marginBottom: normalize(15),
+      marginBottom: adaptToWidth(15),
     },
     openedCat: {
-      marginBottom: normalize(20),
+      marginBottom: adaptToWidth(20),
     },
     articlesCard: {
-      width: normalize(330),
+      width: adaptToWidth(330),
       flexDirection: "row",
       justifyContent: "space-around",
     },
     articlesInput: {
-      height: normalize(30),
-      width: normalize(280),
-      borderWidth: normalize(1),
-      borderRadius: normalize(5),
+      height: adaptToWidth(30),
+      width: adaptToWidth(280),
+      borderWidth: adaptToWidth(1),
+      borderRadius: adaptToWidth(5),
       borderColor: "black",
       alignItems: "flex-start",
       justifyContent: "center",
-      paddingHorizontal: normalize(10),
+      paddingHorizontal: adaptToWidth(10),
     },
   });
 };

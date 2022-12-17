@@ -76,14 +76,19 @@ export default function ListsScreen({ navigation }) {
   );
 }
 
-const makeStyles = (height, width, fontScale) => {
-  const adaptToHeight = (size) => {
-    return (height * size) / 844 / fontScale;
-  };
+const makeStyles = (height: number, width: number, fontScale: number) => {
 
-  const normalize = (size) => {
-    return (width * size) / 390 / fontScale;
-  };
+  const adaptToHeight = (size: number) => {
+    return ((height * size) / 844) / fontScale
+  }
+
+  const adaptToWidth = (size: number) => {
+    return ((width * size) / 390)
+  }
+
+  const normalizeText = (size: number) => {
+    return ((width * size) / 390) / fontScale
+  }
 
   return StyleSheet.create({
     backgroundView: {
@@ -105,8 +110,8 @@ const makeStyles = (height, width, fontScale) => {
       alignItems: "center",
       height: "100%",
       width: "100%",
-      paddingHorizontal: normalize(20),
-      paddingVertical: normalize(20),
+      paddingHorizontal: adaptToWidth(20),
+      paddingVertical: adaptToWidth(20),
     },
     addList: {
       flexDirection: "row",
@@ -117,18 +122,18 @@ const makeStyles = (height, width, fontScale) => {
       alignItems: "center",
       width: "80%",
       backgroundColor: "#ffffff",
-      padding: normalize(20),
-      marginRight: normalize(20),
-      marginTop: normalize(20),
-      borderRadius: normalize(10),
+      padding: adaptToWidth(20),
+      marginRight: adaptToWidth(20),
+      marginTop: adaptToWidth(20),
+      borderRadius: adaptToWidth(10),
     },
     listsText: {
-      marginTop: normalize(50),
+      marginTop: adaptToWidth(50),
       alignSelf: "flex-start",
     },
     lists: {
-      marginTop: normalize(5),
-      paddingTop: normalize(20),
+      marginTop: adaptToWidth(5),
+      paddingTop: adaptToWidth(20),
       borderTopWidth: 2,
       borderTopColor: "black",
       alignSelf: "flex-start",
