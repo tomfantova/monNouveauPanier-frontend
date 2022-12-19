@@ -52,26 +52,48 @@ export default function App() {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
 
-  function LogoTitle() {
+
+
+  const HeaderContent = (props: any) => {
+
+    let handleHeaderTitle: any = ''
+
+    if (props.children === 'Guides') {
+      handleHeaderTitle = () => {
+        return (
+        <View style={styles.headerItemContainer}>
+          <Image
+            style={styles.headerLogoImage}
+            source={require('./assets/logo/logo-transparent.png')}
+            defaultSource={require('./assets/logo/logo-transparent.png')}
+          />
+          <Text style={styles.headerLogoName}>Mon Nouveau Panier</Text>
+        </View>
+      )}
+    } else {
+      handleHeaderTitle = () => {
+        return (
+          <View style={styles.headerItemContainer}>
+            <Text style={styles.headerTitleText}>{props.children}</Text>
+          </View>
+        )
+      }
+    }
+
     return (
       <View style={styles.headerContainer}>
         <View style={styles.headerItemContainer}>
           <TouchableOpacity style={styles.headerMenuButton}>
-            <MaterialCommunityIcon name="handshake" color="#888888" size={30} />
+            <MaterialCommunityIcon name="handshake" color="#F1F1F1" size={30} />
           </TouchableOpacity>
         </View>
-        <View style={styles.headerItemContainer}>
-          <Image
-            style={styles.headerLogoImage}
-            source={require("./assets/logo/logo-transparent.png")}
-          />
-          <Text style={styles.headerLogoName}>Mon Nouveau Panier</Text>
-        </View>
+        {handleHeaderTitle()}
         <View style={styles.headerItemContainer}>
           <TouchableOpacity style={styles.headerProfileButton}>
             <Image
               style={styles.headerProfileImage}
-              source={require("./assets/avatars/type2.png")}
+              source={require('./assets/avatars/type1.png')}
+              defaultSource={require('./assets/avatars/type1.png')}
             />
           </TouchableOpacity>
         </View>
@@ -79,12 +101,16 @@ export default function App() {
     );
   }
 
+
+
   const TabNavigator = () => {
+
     return (
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size }) => {
+
             let iconName: string = "";
             let customSize: number = 0;
 
@@ -113,15 +139,14 @@ export default function App() {
           tabBarActiveTintColor: "#F1A100",
           tabBarInactiveTintColor: "#AFAFAF",
           headerShown: true,
+          headerTitle: (props: any) => <HeaderContent {...props} />,
+          headerStyle: {backgroundColor: '#002654'},
         })}
       >
         <Tab.Screen
           name="Guides"
           component={GuidesScreen}
-          options={{
-            title: "Guides",
-            headerTitle: (props: any) => <LogoTitle {...props} />,
-          }}
+          options={{ title: "Guides" }}
         />
         <Tab.Screen
           name="Bookmarks"
@@ -142,10 +167,12 @@ export default function App() {
     );
   };
 
+
+
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
-        <StatusBar style="auto" />
+        <StatusBar style="light" />
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{
@@ -164,14 +191,20 @@ export default function App() {
   );
 }
 
+
+
 const makeStyles = (height: number, width: number, fontScale: number) => {
   const adaptToHeight = (size: number) => {
-    return (height * size) / 844 / fontScale;
-  };
+    return ((height * size) / 844)
+  }
 
-  const normalize = (size: number) => {
-    return (width * size) / 390 / fontScale;
-  };
+  const adaptToWidth = (size: number) => {
+    return ((width * size) / 390)
+  }
+
+  const normalizeText = (size: number) => {
+    return ((width * size) / 390) / fontScale
+  }
 
   return StyleSheet.create({
     headerContainer: {
@@ -183,6 +216,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       justifyContent: "center",
       alignItems: "center",
       marginBottom: 6,
+      marginHorizontal: adaptToWidth(3.4),
     },
     headerMenuButton: {
       height: 38,
@@ -199,16 +233,21 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       marginBottom: 2,
     },
     headerLogoName: {
-      textAlign: "center",
-      color: "#DAAC3C",
-      fontSize: 9,
-      fontWeight: "500",
+      textAlign: 'center',
+      color: '#D6930C',
+      fontSize: 9 / fontScale,
+      fontWeight: '500',
+    },
+    headerTitleText: {
+      fontSize: 16 / fontScale,
+      fontWeight: '600',
+      color: 'white',
     },
     headerProfileButton: {
       height: 38,
       width: 38,
-      borderColor: "#AFAFAF",
-      backgroundColor: "#EFEFEF",
+      borderColor: '#AFAFAF',
+      backgroundColor: '#F1F1F1',
       borderRadius: 50,
       borderWidth: 1,
       justifyContent: "center",

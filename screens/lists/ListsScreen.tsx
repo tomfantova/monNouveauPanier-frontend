@@ -191,14 +191,19 @@ export default function ListsScreen({ navigation }) {
   );
 }
 
-const makeStyles = (height, width, fontScale) => {
+const makeStyles = (height: number, width: number, fontScale: number) => {
+
+  const adaptToHeight = (size: number) => {
+    return ((height * size) / 844) / fontScale
+  }
+
   const adaptToWidth = (size: number) => {
-    return (width * size) / 390;
-  };
+    return ((width * size) / 390)
+  }
 
   const normalizeText = (size: number) => {
-    return (width * size) / 390 / fontScale;
-  };
+    return ((width * size) / 390) / fontScale
+  }
 
   return StyleSheet.create({
     backgroundView: {
