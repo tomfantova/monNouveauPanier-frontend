@@ -224,7 +224,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       fontWeight: '500',
     },
     headerTitleText: {
-      fontSize: 16,
+      fontSize: 16 / fontScale,
       fontWeight: '600',
       color: 'white',
     },
