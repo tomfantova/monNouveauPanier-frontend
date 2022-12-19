@@ -37,6 +37,8 @@ export default function SectionsScreen({ navigation }) {
     (state: { currentList: UserState }) => state.currentList.value
   );
 
+  console.log(REACT_APP_BACKEND_URL);
+
   // Ajouter un rayon dont ouverture et fermeture modale //
 
   const handleOpenModalCategory = () => {

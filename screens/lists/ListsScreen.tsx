@@ -29,7 +29,7 @@ export default function ListsScreen({ navigation }) {
     (state: { executedList: UserState }) => state.executedList.value
   );
 
-  // A enlever : supprimer toutes les listes du reducer user pour test //
+  // A enlever : supprimer toutes les listes des reducers pour test //
 
   // dispatch(emptyLists());
   // dispatch(removeExecutedList());
