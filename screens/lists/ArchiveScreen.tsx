@@ -310,9 +310,9 @@ const makeStyles = (height, width, fontScale) => {
       marginBottom: adaptToWidth(55),
     },
     modalView: {
+      backgroundColor: "#f1f5f8",
       height: adaptToWidth(730),
       width: adaptToWidth(380),
-      backgroundColor: "white",
       borderRadius: adaptToWidth(20),
       padding: adaptToWidth(20),
       alignItems: "center",
@@ -331,7 +331,9 @@ const makeStyles = (height, width, fontScale) => {
       marginTop: adaptToWidth(20),
       paddingTop: adaptToWidth(8),
       backgroundColor: "#F1A100",
-      borderRadius: adaptToWidth(10),
+      borderRadius: adaptToWidth(8),
+      borderColor: "black",
+      borderWidth: adaptToWidth(0.5),
     },
     archiveButton: {
       width: adaptToWidth(220),
@@ -339,7 +341,9 @@ const makeStyles = (height, width, fontScale) => {
       marginTop: adaptToWidth(20),
       paddingTop: adaptToWidth(8),
       backgroundColor: "#F1A100",
-      borderRadius: adaptToWidth(10),
+      borderRadius: adaptToWidth(8),
+      borderColor: "black",
+      borderWidth: adaptToWidth(0.5),
     },
     textButton: {
       color: "black",

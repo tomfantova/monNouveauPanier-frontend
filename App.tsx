@@ -14,12 +14,18 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import user from "./reducers/user";
 import currentList from "./reducers/currentList";
 import executedList from "./reducers/executedList";
+import modifyList from "./reducers/modifyList";
 
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const reducers = combineReducers({ user, currentList, executedList });
+const reducers = combineReducers({
+  user,
+  currentList,
+  executedList,
+  modifyList,
+});
 const persistConfig = { key: "monnouveaupanier", storage: AsyncStorage };
 
 const store = configureStore({
@@ -52,32 +58,30 @@ export default function App() {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
 
-
-
   const HeaderContent = (props: any) => {
+    let handleHeaderTitle: any = "";
 
-    let handleHeaderTitle: any = ''
-
-    if (props.children === 'Guides') {
+    if (props.children === "Guides") {
       handleHeaderTitle = () => {
         return (
-        <View style={styles.headerItemContainer}>
-          <Image
-            style={styles.headerLogoImage}
-            source={require('./assets/logo/logo-transparent.png')}
-            defaultSource={require('./assets/logo/logo-transparent.png')}
-          />
-          <Text style={styles.headerLogoName}>Mon Nouveau Panier</Text>
-        </View>
-      )}
+          <View style={styles.headerItemContainer}>
+            <Image
+              style={styles.headerLogoImage}
+              source={require("./assets/logo/logo-transparent.png")}
+              defaultSource={require("./assets/logo/logo-transparent.png")}
+            />
+            <Text style={styles.headerLogoName}>Mon Nouveau Panier</Text>
+          </View>
+        );
+      };
     } else {
       handleHeaderTitle = () => {
         return (
           <View style={styles.headerItemContainer}>
             <Text style={styles.headerTitleText}>{props.children}</Text>
           </View>
-        )
-      }
+        );
+      };
     }
 
     return (
@@ -92,25 +96,21 @@ export default function App() {
           <TouchableOpacity style={styles.headerProfileButton}>
             <Image
               style={styles.headerProfileImage}
-              source={require('./assets/avatars/type1.png')}
-              defaultSource={require('./assets/avatars/type1.png')}
+              source={require("./assets/avatars/type1.png")}
+              defaultSource={require("./assets/avatars/type1.png")}
             />
           </TouchableOpacity>
         </View>
       </View>
     );
-  }
-
-
+  };
 
   const TabNavigator = () => {
-
     return (
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size }) => {
-
             let iconName: string = "";
             let customSize: number = 0;
 
@@ -140,7 +140,7 @@ export default function App() {
           tabBarInactiveTintColor: "#AFAFAF",
           headerShown: true,
           headerTitle: (props: any) => <HeaderContent {...props} />,
-          headerStyle: {backgroundColor: '#002654'},
+          headerStyle: { backgroundColor: "#002654" },
         })}
       >
         <Tab.Screen
@@ -163,11 +163,16 @@ export default function App() {
           component={ListsScreen}
           options={{ title: "Listes" }}
         />
+        <Tab.Screen
+          name="Sections"
+          component={SectionsScreen}
+          options={{
+            tabBarButton: () => null,
+          }}
+        />
       </Tab.Navigator>
     );
   };
-
-
 
   return (
     <Provider store={store}>
@@ -191,20 +196,18 @@ export default function App() {
   );
 }
 
-
-
 const makeStyles = (height: number, width: number, fontScale: number) => {
   const adaptToHeight = (size: number) => {
-    return ((height * size) / 844)
-  }
+    return (height * size) / 844;
+  };
 
   const adaptToWidth = (size: number) => {
-    return ((width * size) / 390)
-  }
+    return (width * size) / 390;
+  };
 
   const normalizeText = (size: number) => {
-    return ((width * size) / 390) / fontScale
-  }
+    return (width * size) / 390 / fontScale;
+  };
 
   return StyleSheet.create({
     headerContainer: {
@@ -233,21 +236,21 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       marginBottom: 2,
     },
     headerLogoName: {
-      textAlign: 'center',
-      color: '#D6930C',
+      textAlign: "center",
+      color: "#D6930C",
       fontSize: 9 / fontScale,
-      fontWeight: '500',
+      fontWeight: "500",
     },
     headerTitleText: {
       fontSize: 16 / fontScale,
-      fontWeight: '600',
-      color: 'white',
+      fontWeight: "600",
+      color: "white",
     },
     headerProfileButton: {
       height: 38,
       width: 38,
-      borderColor: '#AFAFAF',
-      backgroundColor: '#F1F1F1',
+      borderColor: "#AFAFAF",
+      backgroundColor: "#F1F1F1",
       borderRadius: 50,
       borderWidth: 1,
       justifyContent: "center",

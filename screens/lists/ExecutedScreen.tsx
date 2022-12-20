@@ -14,8 +14,14 @@ import {
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useDispatch, useSelector } from "react-redux";
-import { changeArticleStatus, UserState } from "../../reducers/executedList";
+import { addCurrentList } from "../../reducers/currentList";
+import {
+  changeArticleStatus,
+  removeExecutedList,
+  UserState,
+} from "../../reducers/executedList";
 import { changeListStatus } from "../../reducers/user";
+import { modifyTrue } from "../../reducers/modifyList";
 
 export default function ExecutedScreen({ navigation }) {
   const { height, width, fontScale } = useWindowDimensions();
@@ -169,6 +175,14 @@ export default function ExecutedScreen({ navigation }) {
     navigation.navigate("TabNavigator", { screen: "Lists" });
   };
 
+  // Renvoyer la liste en modification dans SectionsScreen //
+
+  const handleModify = () => {
+    dispatch(addCurrentList(executedList));
+    dispatch(modifyTrue());
+    navigation.navigate("Sections");
+  };
+
   // Archiver la liste //
 
   const handleArchive = () => {
@@ -219,6 +233,13 @@ export default function ExecutedScreen({ navigation }) {
           <KeyboardAwareScrollView contentContainerStyle={styles.sections}>
             {viewSections}
           </KeyboardAwareScrollView>
+          <TouchableOpacity
+            onPress={() => handleModify()}
+            style={styles.archiveButton}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.textButton}>Modifier cette liste</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => handleArchive()}
             style={styles.archiveButton}
@@ -319,7 +340,7 @@ const makeStyles = (height, width, fontScale) => {
     modalView: {
       height: adaptToWidth(730),
       width: adaptToWidth(380),
-      backgroundColor: "white",
+      backgroundColor: "#f1f5f8",
       borderRadius: adaptToWidth(20),
       padding: adaptToWidth(20),
       alignItems: "center",
@@ -338,7 +359,9 @@ const makeStyles = (height, width, fontScale) => {
       marginTop: adaptToWidth(20),
       paddingTop: adaptToWidth(8),
       backgroundColor: "#F1A100",
-      borderRadius: adaptToWidth(10),
+      borderRadius: adaptToWidth(8),
+      borderColor: "black",
+      borderWidth: adaptToWidth(0.5),
     },
     archiveButton: {
       width: adaptToWidth(220),
@@ -346,7 +369,9 @@ const makeStyles = (height, width, fontScale) => {
       marginTop: adaptToWidth(20),
       paddingTop: adaptToWidth(8),
       backgroundColor: "#F1A100",
-      borderRadius: adaptToWidth(10),
+      borderRadius: adaptToWidth(8),
+      borderColor: "black",
+      borderWidth: adaptToWidth(0.5),
     },
     textButton: {
       color: "black",

@@ -22,7 +22,8 @@ import {
   addArticles,
   UserState,
 } from "../../reducers/currentList";
-import { addList } from "../../reducers/user";
+import { addList, deleteList } from "../../reducers/user";
+import { modifyFalse } from "../../reducers/modifyList";
 
 export default function SectionsScreen({ navigation }) {
   const { height, width, fontScale } = useWindowDimensions();
@@ -36,8 +37,6 @@ export default function SectionsScreen({ navigation }) {
   const currentList = useSelector(
     (state: { currentList: UserState }) => state.currentList.value
   );
-
-  console.log(REACT_APP_BACKEND_URL);
 
   // Ajouter un rayon dont ouverture et fermeture modale //
 
@@ -251,6 +250,7 @@ export default function SectionsScreen({ navigation }) {
   const handleQuit = () => {
     navigation.navigate("TabNavigator", { screen: "Lists" });
     dispatch(removeCurrentList());
+    dispatch(modifyFalse());
     setModalQuitVisible(false);
   };
 
@@ -261,6 +261,15 @@ export default function SectionsScreen({ navigation }) {
   // Valider la liste et envoi en BDD + envoi au reducer user + vider le reducer currentList //
 
   const handleSaveList = (currentList) => {
+    fetch(`${REACT_APP_BACKEND_URL}/lists/delete`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        listId: currentList.id,
+        token: "testToken",
+      }),
+    }).then((response) => response.json());
+    dispatch(deleteList(currentList.id));
     fetch(`${REACT_APP_BACKEND_URL}/lists/add`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -270,7 +279,9 @@ export default function SectionsScreen({ navigation }) {
       }),
     }).then((response) => response.json());
     dispatch(addList(currentList));
-    handleQuit();
+    navigation.navigate("TabNavigator", { screen: "Lists" });
+    dispatch(removeCurrentList());
+    setModalQuitVisible(false);
   };
 
   // Return du screen //
@@ -395,19 +406,20 @@ export default function SectionsScreen({ navigation }) {
 
 const makeStyles = (height: number, width: number, fontScale: number) => {
   const adaptToHeight = (size: number) => {
-    return ((height * size) / 844) / fontScale
-  }
+    return (height * size) / 844 / fontScale;
+  };
 
   const adaptToWidth = (size: number) => {
-    return ((width * size) / 390)
-  }
+    return (width * size) / 390;
+  };
 
   const normalizeText = (size: number) => {
-    return ((width * size) / 390) / fontScale
-  }
+    return (width * size) / 390 / fontScale;
+  };
 
   return StyleSheet.create({
     backgroundView: {
+      backgroundColor: "white",
       flex: 1,
       alignItems: "center",
       justifyContent: "center",
@@ -486,17 +498,21 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       alignItems: "center",
     },
     input: {
-      fontSize: normalizeText(16),
       marginTop: adaptToWidth(20),
+      backgroundColor: "white",
       flexDirection: "row",
       justifyContent: "flex-start",
-      backgroundColor: "#ffffff",
-      borderRadius: adaptToWidth(10),
+      fontSize: normalizeText(15),
+      textAlign: "left",
+      borderColor: "black",
+      borderWidth: adaptToWidth(0.5),
+      borderRadius: adaptToWidth(8),
+      padding: adaptToWidth(10),
     },
     modalView: {
       height: adaptToWidth(180),
       width: adaptToWidth(250),
-      backgroundColor: "white",
+      backgroundColor: "#f1f5f8",
       borderRadius: adaptToWidth(20),
       padding: adaptToWidth(20),
       alignItems: "center",
@@ -518,7 +534,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
     modalView2: {
       height: adaptToWidth(730),
       width: adaptToWidth(380),
-      backgroundColor: "white",
+      backgroundColor: "#f1f5f8",
       borderRadius: adaptToWidth(20),
       padding: adaptToWidth(20),
       alignItems: "center",
@@ -540,7 +556,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
     modalView3: {
       height: adaptToWidth(250),
       width: adaptToWidth(350),
-      backgroundColor: "white",
+      backgroundColor: "#f1f5f8",
       borderRadius: adaptToWidth(20),
       padding: adaptToWidth(20),
       alignItems: "center",
@@ -549,6 +565,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
         width: adaptToWidth(10),
         height: adaptToWidth(10),
       },
+      opacity: 0.95,
       shadowOpacity: 0.5,
       shadowRadius: 4,
       elevation: 5,
@@ -559,7 +576,9 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       marginTop: adaptToWidth(20),
       paddingTop: adaptToWidth(8),
       backgroundColor: "#F1A100",
-      borderRadius: adaptToWidth(10),
+      borderRadius: adaptToWidth(8),
+      borderColor: "black",
+      borderWidth: adaptToWidth(0.5),
     },
     textButton: {
       color: "black",
@@ -588,6 +607,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       marginVertical: adaptToWidth(5),
     },
     articlesInput: {
+      backgroundColor: "white",
       height: adaptToWidth(30),
       width: adaptToWidth(250),
       borderWidth: adaptToWidth(1),

@@ -18,6 +18,7 @@ import {
   removeExecutedList,
 } from "../../reducers/executedList";
 import { addCurrentList, UserState } from "../../reducers/currentList";
+import { modifyFalse } from "../../reducers/modifyList";
 
 export default function ListsScreen({ navigation }) {
   const { height, width, fontScale } = useWindowDimensions();
@@ -27,6 +28,9 @@ export default function ListsScreen({ navigation }) {
   const user = useSelector((state: { user: UserState }) => state.user.value);
   const executedList = useSelector(
     (state: { executedList: UserState }) => state.executedList.value
+  );
+  const modifyList = useSelector(
+    (state: { modifyList: UserState }) => state.modifyList.value
   );
 
   // A enlever : supprimer toutes les listes des reducers pour test //
@@ -137,9 +141,10 @@ export default function ListsScreen({ navigation }) {
   // Lancer l'exécution d'une liste //
 
   const handleStart = (list) => {
-    if (executedList === null || executedList.id !== list.id) {
+    if (executedList === null || executedList.id !== list.id || modifyList) {
       dispatch(removeExecutedList());
       dispatch(addExecutedList(list));
+      dispatch(modifyFalse());
     }
     navigation.navigate("Executed");
   };
@@ -206,6 +211,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
 
   return StyleSheet.create({
     backgroundView: {
+      backgroundColor: "#f1f5f8",
       flex: 1,
       alignItems: "center",
       justifyContent: "center",
@@ -241,7 +247,10 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       fontSize: normalizeText(16),
       padding: adaptToWidth(20),
       marginRight: adaptToWidth(20),
-      borderRadius: adaptToWidth(10),
+      textAlign: "left",
+      borderColor: "black",
+      borderWidth: adaptToWidth(0.5),
+      borderRadius: adaptToWidth(8),
     },
     listsTitle: {
       width: adaptToWidth(330),
@@ -270,7 +279,9 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       marginTop: adaptToWidth(20),
       paddingTop: adaptToWidth(8),
       backgroundColor: "#F1A100",
-      borderRadius: adaptToWidth(10),
+      borderRadius: adaptToWidth(8),
+      borderColor: "black",
+      borderWidth: adaptToWidth(0.5),
     },
     textButton: {
       color: "black",
