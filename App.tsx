@@ -105,6 +105,21 @@ export default function App() {
     );
   };
 
+  const ListsStackNavigator = () => {
+    return (
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="ListsView" component={ListsScreen} />
+        <Stack.Screen name="Sections" component={SectionsScreen} />
+        <Stack.Screen name="Executed" component={ExecutedScreen} />
+        <Stack.Screen name="Archive" component={ArchiveScreen} />
+      </Stack.Navigator>
+    );
+  };
+
   const TabNavigator = () => {
     return (
       <Tab.Navigator
@@ -160,15 +175,8 @@ export default function App() {
         />
         <Tab.Screen
           name="Lists"
-          component={ListsScreen}
+          component={ListsStackNavigator}
           options={{ title: "Listes" }}
-        />
-        <Tab.Screen
-          name="Sections"
-          component={SectionsScreen}
-          options={{
-            tabBarButton: () => null,
-          }}
         />
       </Tab.Navigator>
     );
@@ -186,9 +194,6 @@ export default function App() {
           >
             <Stack.Screen name="Bienvenue" component={WelcomeScreen} />
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
-            <Stack.Screen name="Sections" component={SectionsScreen} />
-            <Stack.Screen name="Executed" component={ExecutedScreen} />
-            <Stack.Screen name="Archive" component={ArchiveScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </PersistGate>

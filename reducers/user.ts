@@ -63,6 +63,9 @@ export const userSlice = createSlice({
         (e) => e.id !== action.payload
       );
     },
+    addBookmark: (state, action: PayloadAction<any>) => {
+      state.value.lists.push(action.payload);
+    },
   },
 });
 

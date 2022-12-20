@@ -248,7 +248,7 @@ export default function SectionsScreen({ navigation }) {
   }
 
   const handleQuit = () => {
-    navigation.navigate("TabNavigator", { screen: "Lists" });
+    navigation.navigate("ListsView");
     dispatch(removeCurrentList());
     dispatch(modifyFalse());
     setModalQuitVisible(false);
@@ -279,7 +279,7 @@ export default function SectionsScreen({ navigation }) {
       }),
     }).then((response) => response.json());
     dispatch(addList(currentList));
-    navigation.navigate("TabNavigator", { screen: "Lists" });
+    navigation.navigate("ListsView");
     dispatch(removeCurrentList());
     setModalQuitVisible(false);
   };
@@ -419,7 +419,6 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
 
   return StyleSheet.create({
     backgroundView: {
-      backgroundColor: "white",
       flex: 1,
       alignItems: "center",
       justifyContent: "center",

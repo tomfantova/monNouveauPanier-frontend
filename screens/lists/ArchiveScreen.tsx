@@ -135,7 +135,7 @@ export default function ArchiveScreen({ navigation }) {
   }
 
   const handleQuit = () => {
-    navigation.navigate("TabNavigator", { screen: "Lists" });
+    navigation.navigate("ListsView");
   };
 
   // Réactiver la liste //
@@ -152,7 +152,7 @@ export default function ArchiveScreen({ navigation }) {
       }),
     }).then((response) => response.json());
     dispatch(changeListStatus({ id: executedList.id, date: reactiveDate }));
-    navigation.navigate("TabNavigator", { screen: "Lists" });
+    navigation.navigate("ListsView");
   };
 
   // Supprimer la liste //
@@ -167,7 +167,7 @@ export default function ArchiveScreen({ navigation }) {
       }),
     }).then((response) => response.json());
     dispatch(deleteList(executedList.id));
-    navigation.navigate("TabNavigator", { screen: "Lists" });
+    navigation.navigate("ListsView");
   };
 
   // Return du screen //

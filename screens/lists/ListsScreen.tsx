@@ -211,7 +211,6 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
 
   return StyleSheet.create({
     backgroundView: {
-      backgroundColor: "#f1f5f8",
       flex: 1,
       alignItems: "center",
       justifyContent: "center",

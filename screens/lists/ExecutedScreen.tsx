@@ -172,7 +172,7 @@ export default function ExecutedScreen({ navigation }) {
   }
 
   const handleQuit = () => {
-    navigation.navigate("TabNavigator", { screen: "Lists" });
+    navigation.navigate("ListsView");
   };
 
   // Renvoyer la liste en modification dans SectionsScreen //
@@ -197,7 +197,7 @@ export default function ExecutedScreen({ navigation }) {
       }),
     }).then((response) => response.json());
     dispatch(changeListStatus({ id: executedList.id, date: archiveDate }));
-    navigation.navigate("TabNavigator", { screen: "Lists" });
+    navigation.navigate("ListsView");
   };
 
   // Return du screen //
