@@ -15,6 +15,7 @@ import user from "./reducers/user";
 import currentList from "./reducers/currentList";
 import executedList from "./reducers/executedList";
 import modifyList from "./reducers/modifyList";
+import allGuides from "./reducers/allGuides";
 
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
@@ -25,6 +26,7 @@ const reducers = combineReducers({
   currentList,
   executedList,
   modifyList,
+  allGuides,
 });
 const persistConfig = { key: "monnouveaupanier", storage: AsyncStorage };
 

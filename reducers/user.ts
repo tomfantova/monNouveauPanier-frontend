@@ -7,12 +7,7 @@ export type UserState = {
     email: string | null;
     token: string | null;
     preferences: {};
-    bookmarks: {
-      interviews: string[];
-      generalities: string[];
-      products: string[];
-      labels: string[];
-    };
+    bookmarks: any[];
     lists: any[];
   };
 };
@@ -24,12 +19,7 @@ const initialState: UserState = {
     email: null,
     token: null,
     preferences: {},
-    bookmarks: {
-      interviews: [],
-      generalities: [],
-      products: [],
-      labels: [],
-    },
+    bookmarks: [],
     lists: [],
   },
 };
@@ -64,7 +54,12 @@ export const userSlice = createSlice({
       );
     },
     addBookmark: (state, action: PayloadAction<any>) => {
-      state.value.lists.push(action.payload);
+      state.value.bookmarks.push(action.payload);
+    },
+    deleteBookmark: (state, action: PayloadAction<any>) => {
+      state.value.bookmarks = state.value.bookmarks.filter(
+        (e) => e !== action.payload
+      );
     },
   },
 });
@@ -75,5 +70,7 @@ export const {
   emptyLists,
   changeListStatus,
   deleteList,
+  addBookmark,
+  deleteBookmark,
 } = userSlice.actions;
 export default userSlice.reducer;
