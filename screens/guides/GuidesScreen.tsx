@@ -1,17 +1,23 @@
 import React from 'react'
-import { Image, ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableHighlight, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions, View } from 'react-native'
+import { Image, ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
+import { useDispatch, useSelector } from 'react-redux'
+import { updateAllGuides, AllGuidesState } from '../../reducers/allGuides'
 import { useEffect, useRef, useState } from 'react'
 
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
-
-
 
 export default function GuidesScreen({ navigation }) {
 
     const { height, width, fontScale }: { height: number, width: number, fontScale: number } = useWindowDimensions();
     const styles: any = makeStyles(height, width, fontScale)
+
+    const dispatch = useDispatch()
+    const allGuides = useSelector((state: { allGuides: AllGuidesState }) => state.allGuides.value)
+
+    const globalScrollRef = useRef<any>()
+    const [globalScrollEnabled, setGlobalScrollEnabled] = useState(true)
 
     const initialSearchInputPlaceholder: string = '🔍  Rechercher un guide conso'
     const [searchInputPlaceholder, setSearchInputPlaceholder] = useState<string>(initialSearchInputPlaceholder)
@@ -26,6 +32,29 @@ export default function GuidesScreen({ navigation }) {
     const initialPostingInputPlaceholder: string = "Notre application vous plaît? Partagez vos retours et vos suggestions. 🧺🌱"
     const [postingInputPlaceholder, setPostingInputPlaceholder] = useState<string>(initialPostingInputPlaceholder)
     const [postingInput, setPostingInput] = useState<string>('')
+
+
+    // useEffect(() => {
+    //     fetch('http://10.2.0.153:3000/guides/all')
+    //     .then(response => response.json())
+    //     .then(dbAllGuidesData => {
+    //         const dbAllGuides = dbAllGuidesData.allGuides
+    //         dispatch(updateAllGuides(dbAllGuides))
+    //     })
+    // }, [])
+
+
+    const handleSearchInputFocus = () => {
+        setSearchInputPlaceholder('')
+        globalScrollRef.current?.scrollToPosition(0, 0)
+        setGlobalScrollEnabled(false)
+    }
+
+
+    const handleSearchInputBlur = () => {
+        setSearchInputPlaceholder(initialSearchInputPlaceholder)
+        setGlobalScrollEnabled(true)
+    }
 
 
     const newsCards: JSX.Element[] = [
@@ -227,9 +256,21 @@ export default function GuidesScreen({ navigation }) {
 
     }
 
+
+    let dispSearchResults: object = { display: 'none' }
+    if (searchInput !== '') {
+        dispSearchResults = { display: 'flex' }
+        console.log('go')
+    }
+
     
     return (
-        <KeyboardAwareScrollView>
+        <>
+        <KeyboardAwareScrollView
+            enableResetScrollToCoords={false}
+            scrollEnabled={globalScrollEnabled}
+            ref={globalScrollRef}
+        >
             <View style={styles.globalBackgroundView}>
                 <SafeAreaView style={styles.globalSafeAreaViewContainer}>
                     <View style={styles.globalViewContainer}>
@@ -246,8 +287,8 @@ export default function GuidesScreen({ navigation }) {
                                     style={styles.searchInput}
                                     placeholder={searchInputPlaceholder}
                                     placeholderTextColor='grey'
-                                    onFocus={() => setSearchInputPlaceholder('')}
-                                    onBlur={() => setSearchInputPlaceholder(initialSearchInputPlaceholder)}
+                                    onFocus={() => handleSearchInputFocus()}
+                                    onBlur={() => handleSearchInputBlur()}
                                     onChangeText={(e: string) => setSearchInput(e)}
                                     value={searchInput}
                                 />
@@ -420,7 +461,7 @@ export default function GuidesScreen({ navigation }) {
                                         </View>
                                     </View>
                                     <View style={styles.postsCardMessageContainer}>
-                                        <Text style={styles.postsCardMessage}>Pas mal, en TypeScript, mais ça serait encore mieux si vous passiez en "strict: true" en retirant tous ces "any"... </Text>
+                                        <Text style={styles.postsCardMessage}>Pas mal l'app en TypeScript, mais ça serait encore mieux en "strict: true" et en retirant tous ces "any"... </Text>
                                     </View>
                                     <View style={styles.postsCardFooter}>
                                         <TouchableWithoutFeedback>
@@ -520,6 +561,14 @@ export default function GuidesScreen({ navigation }) {
                 </SafeAreaView>
             </View>
         </KeyboardAwareScrollView>
+        <View style={[styles.searchResults, dispSearchResults]}>
+            <Text>Résultats de la recherche :</Text>
+            <View>
+                <View style={styles.searchResultCard}></View>
+            </View>
+        </View>
+
+        </>
     )
 }
 
@@ -563,23 +612,22 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             height: '100%',
             width: '100%',
             paddingHorizontal: adaptToWidth(19.5),
-            paddingVertical: adaptToWidth(20),
+            paddingBottom: adaptToWidth(20),
         },
 
 
         searchContainer: {
             justifyContent: 'flex-start',
             alignItems: 'center',
-            marginBottom: adaptToWidth(20),
             height: adaptToWidth(180),
-            width: '100%',
-            borderRadius: adaptToWidth(10),
+            width: width,
+            borderColor: 'black',
+            borderWidth: adaptToWidth(0.5)
         },
         searchBackgroundImage: {
             height: '100%',
             width: '100%',
             resizeMode: 'cover',
-            borderRadius: adaptToWidth(10),
             position: 'absolute',
         },
         searchBackgroundImageOpacity: {
@@ -588,7 +636,6 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             justifyContent: 'flex-end',
             alignItems: 'center',
             backgroundColor: 'rgba(50, 50, 50, 0.3)',
-            borderRadius: adaptToWidth(10),
         },
         searchInput: {
             fontSize: normalizeText(15),
@@ -597,17 +644,29 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             padding: adaptToWidth(14),
             borderColor: 'black',
             borderWidth: adaptToWidth(0.5),
-            borderRadius: adaptToWidth(8),
+            borderRadius: adaptToWidth(6),
             marginBottom: adaptToWidth(22),
             backgroundColor: 'rgba(255, 255, 255, 0.9)',
         },
 
 
+        searchResults: {
+            position: 'absolute',
+            top: adaptToWidth(180),
+            width: width,
+            backgroundColor: 'red',
+            height: '100%',
+            paddingBottom: adaptToWidth(180),
+            justifyContent: 'flex-end',
+        },
+
+
         newsContainer: {
+            marginTop: adaptToWidth(30),
             marginBottom: adaptToWidth(20),
             height: adaptToWidth(240),
             width: '100%',
-            borderRadius: adaptToWidth(10),
+            borderRadius: adaptToWidth(8),
             backgroundColor: 'white',
         },
         newsCardContainer: {
@@ -661,7 +720,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: '#F1A100',
-            borderRadius: adaptToWidth(8),
+            borderRadius: adaptToWidth(6),
             borderColor: 'black',
             borderWidth: adaptToWidth(0.5),
         },
@@ -697,7 +756,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            borderRadius: adaptToWidth(8),
+            borderRadius: adaptToWidth(6),
             borderColor: 'black',
             borderWidth: adaptToWidth(0.5),
         },
@@ -710,7 +769,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             resizeMode: 'cover',
         },
         newsSecondOpacity: {
-            backgroundColor: 'rgba(50, 50, 60, 0.7)',
+            backgroundColor: 'rgba(50, 50, 55, 0.7)',
             paddingVertical: adaptToWidth(30),
             paddingHorizontal: adaptToWidth(20),
         },
@@ -732,7 +791,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: 'rgba(255, 255, 255, 0.74)',
-            borderRadius: adaptToWidth(8),
+            borderRadius: adaptToWidth(6),
             borderColor: 'black',
             borderWidth: adaptToWidth(0.5),
         },
@@ -766,7 +825,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            borderRadius: adaptToWidth(8),
+            borderRadius: adaptToWidth(6),
             borderColor: 'black',
             borderWidth: adaptToWidth(0.5),
         },
@@ -804,7 +863,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             justifyContent: 'flex-start',
             alignItems: 'center',
             width: '100%',
-            borderRadius: adaptToWidth(10),
+            borderRadius: adaptToWidth(8),
             paddingHorizontal: adaptToWidth(10),
             paddingTop: adaptToWidth(30),
             paddingBottom: adaptToWidth(10),
@@ -826,7 +885,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             alignItems: 'center',
             height: adaptToWidth(414),
             width: '100%',
-            borderRadius: adaptToWidth(10),
+            borderRadius: adaptToWidth(8),
         },
         guidesCard: {
             justifyContent: 'center',
@@ -834,13 +893,13 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             height: '45%',
             width: '45%',
             margin: adaptToWidth(8),
-            borderRadius: adaptToWidth(8),
+            borderRadius: adaptToWidth(6),
         },
         guidesCardImageBackground: {
             resizeMode: 'cover',
             height: '100%',
             width: '100%',
-            borderRadius: adaptToWidth(8),
+            borderRadius: adaptToWidth(6),
             borderColor: 'black',
             borderWidth: adaptToWidth(0.5),
         },
@@ -868,7 +927,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             paddingHorizontal: adaptToWidth(20),
             paddingBottom: adaptToWidth(20),
             width: '100%',
-            borderRadius: adaptToWidth(10),
+            borderRadius: adaptToWidth(8),
             marginBottom: adaptToWidth(20),
             borderColor: 'grey',
             borderWidth: adaptToWidth(0.5),
@@ -886,20 +945,20 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             marginVertical: adaptToWidth(8),
             borderColor: 'grey',
             borderWidth: adaptToWidth(0.5),
-            borderRadius: adaptToWidth(8),
+            borderRadius: adaptToWidth(6),
             paddingHorizontal: '5%',
             paddingTop: adaptToWidth(14),
             paddingBottom: adaptToWidth(14),
             fontSize: normalizeText(15),
         },
         postingBtn: {
-            marginTop: adaptToWidth(14),
+            marginTop: adaptToWidth(10),
             height: adaptToWidth(40),
             width: adaptToWidth(220),
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: '#F1A100',
-            borderRadius: adaptToWidth(8),
+            borderRadius: adaptToWidth(6),
             borderColor: 'black',
             borderWidth: adaptToWidth(0.5),
             marginBottom: adaptToWidth(8),
@@ -918,9 +977,8 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             paddingTop: adaptToWidth(30),
             paddingHorizontal: adaptToWidth(20),
             paddingBottom: adaptToWidth(20),
-
             width: '100%',
-            borderRadius: adaptToWidth(10),
+            borderRadius: adaptToWidth(8),
             borderColor: 'grey',
             borderWidth: adaptToWidth(0.5),
         },
@@ -933,7 +991,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
             width: '100%',
             marginTop: adaptToWidth(8),
-            borderRadius: adaptToWidth(8),
+            borderRadius: adaptToWidth(6),
             borderWidth: adaptToWidth(0.5),
             borderColor: 'grey',
             justifyContent: 'flex-start',
@@ -1015,22 +1073,22 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
         },
         postsCardReactionIconHeart: {
             marginTop: adaptToWidth(1),
-            color: "rgba(241, 161, 0, 1)",
+            color: "rgba(241, 161, 0, 0.5)",
             fontSize: adaptToWidth(12), // Laisser adaptToWidth(), insensible au fontScale
         },
         postsCardReactionIconUp: {
             marginBottom: adaptToWidth(1),
-            color: "rgba(0, 220, 0, 1)",
+            color: "rgba(50, 200, 50, 0.5)",
             fontSize: adaptToWidth(16), // Laisser adaptToWidth(), insensible au fontScale
         },
         postsCardReactionIconDown: {
             marginTop: adaptToWidth(1),
-            color: "rgba(240, 20, 20, 1)",
+            color: "rgba(240, 50, 50, 0.5)",
             fontSize: adaptToWidth(16), // Laisser adaptToWidth(), insensible au fontScale
         },
         postsCardReactionIconAlert: {
             marginBottom: adaptToWidth(1),
-            color: "rgba(0, 0, 0, 1)",
+            color: "rgba(0, 0, 0, 0.5)",
             fontSize: adaptToWidth(12), // Laisser adaptToWidth(), insensible au fontScale
         },
         postsCardReactionCount: {
@@ -1043,10 +1101,10 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: '#F1A100',
-            borderRadius: adaptToWidth(8),
+            borderRadius: adaptToWidth(6),
             borderColor: 'black',
             borderWidth: adaptToWidth(0.5),
-            marginTop: adaptToWidth(24),
+            marginTop: adaptToWidth(20),
             marginBottom: adaptToWidth(10),
         },
         postsLoadingBtnText: {

@@ -7,12 +7,7 @@ export type UserState = {
     email: string | null;
     token: string | null;
     preferences: {};
-    bookmarks: {
-      interviews: string[];
-      generalities: string[];
-      products: string[];
-      labels: string[];
-    };
+    bookmarks: string[]
     lists: any[];
   };
 };
@@ -24,12 +19,7 @@ const initialState: UserState = {
     email: null,
     token: null,
     preferences: {},
-    bookmarks: {
-      interviews: [],
-      generalities: [],
-      products: [],
-      labels: [],
-    },
+    bookmarks: [],
     lists: [],
   },
 };
