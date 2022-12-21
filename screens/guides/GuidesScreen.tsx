@@ -124,7 +124,7 @@ export default function GuidesScreen({ navigation }) {
                             <Image
                                 style={styles.searchResultsCardImage}
                                 source={require('../../assets/guides/news-honey.jpg')}
-                                defaultSource={require('../../assets/guides/news-honey.jpg')}
+                                // defaultSource={require('../../assets/guides/news-honey.jpg')}
                             />
                             <Text style={styles.searchResultsCardTitle}>{e.title}</Text>
                         </View>
@@ -884,7 +884,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             borderColor: 'grey',
             width: adaptToWidth(60),
             height: adaptToWidth(60),
-            backgroundColor: 'blue',
+            backgroundColor: '#F2F2F2',
         },
         searchResultsCardTitle: {
             fontWeight: '600',
