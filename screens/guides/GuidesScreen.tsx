@@ -1,5 +1,5 @@
 import React from 'react'
-import { Image, ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions, View } from 'react-native'
+import { Image, ImageBackground, Keyboard, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -7,6 +7,8 @@ import { updateAllGuides, AllGuidesState } from '../../reducers/allGuides'
 import { useEffect, useRef, useState } from 'react'
 
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+
+
 
 export default function GuidesScreen({ navigation }) {
 
@@ -20,8 +22,17 @@ export default function GuidesScreen({ navigation }) {
     const [globalScrollEnabled, setGlobalScrollEnabled] = useState(true)
 
     const initialSearchInputPlaceholder: string = '🔍  Rechercher un guide conso'
+    const initialCurrentSearchResults: JSX.Element[] = [
+        <View style={styles.searchResultsNoResultsView} key={0}>
+            <Text style={styles.searchResultsNoResultsText}>
+                Entrez au moins 3 caractères pour rechercher un guide.
+            </Text>
+        </View>
+    ]
     const [searchInputPlaceholder, setSearchInputPlaceholder] = useState<string>(initialSearchInputPlaceholder)
     const [searchInput, setSearchInput] = useState<string>('')
+    const [dispSearchResults, setDispSearchResults] = useState<object>({ display: 'none' })
+    const [currentSearchResults, setCurrentSearchResults] = useState<JSX.Element[]>(initialCurrentSearchResults)
 
     const scrollRef = useRef<any>()
     const firstCardOffset: number = width - ((width * 39) / 390)
@@ -34,14 +45,14 @@ export default function GuidesScreen({ navigation }) {
     const [postingInput, setPostingInput] = useState<string>('')
 
 
-    // useEffect(() => {
-    //     fetch('http://10.2.0.153:3000/guides/all')
-    //     .then(response => response.json())
-    //     .then(dbAllGuidesData => {
-    //         const dbAllGuides = dbAllGuidesData.allGuides
-    //         dispatch(updateAllGuides(dbAllGuides))
-    //     })
-    // }, [])
+    useEffect(() => {
+        fetch('http://192.168.1.79:3000/guides/all')
+        .then(response => response.json())
+        .then(dbAllGuidesData => {
+            const dbAllGuides = dbAllGuidesData.allGuides
+            dispatch(updateAllGuides(dbAllGuides))
+        })
+    }, [])
 
 
     const handleSearchInputFocus = () => {
@@ -53,7 +64,101 @@ export default function GuidesScreen({ navigation }) {
 
     const handleSearchInputBlur = () => {
         setSearchInputPlaceholder(initialSearchInputPlaceholder)
-        setGlobalScrollEnabled(true)
+        searchInput.length === 0 && setGlobalScrollEnabled(true)
+    }
+
+
+    useEffect(() => {
+
+        if (searchInput.length > 0) {
+            setDispSearchResults({ display: 'flex' })
+        } else {
+            setDispSearchResults({ display: 'none' })
+        }
+
+
+        const nothingFound: JSX.Element[] = [
+            <View style={styles.searchResultsNoResultsView} key={0}>
+                <Text style={styles.searchResultsNoResultsText}>
+                    Désolé, nous n'avons rien trouvé !{'\n\n'}Vous pouvez nous suggérer un nouveau guide en bas de la page d'accueil.
+                </Text>
+            </View>
+        ]
+
+
+        if (searchInput.length < 3) {
+
+            setCurrentSearchResults(initialCurrentSearchResults)
+
+        } else {
+
+            const newSearchResults: JSX.Element[] = allGuides
+                .filter(e => e.tags.some((tag: string) => tag.includes(searchInput.toLowerCase())))
+                .map((e, i) => {
+
+                let categoryLetter: string = '?'
+                let categoryColor: object = { backgroundColor : 'white' }
+    
+                switch (e.category) {
+                    case 'generalities':
+                        categoryLetter = 'G'
+                        categoryColor = { backgroundColor: '#004FC9' }
+                        break
+                    case 'products':
+                        categoryLetter = 'P'
+                        categoryColor = { backgroundColor: '#00993F' }
+                        break
+                    case 'labels':
+                        categoryLetter = 'L'
+                        categoryColor = { backgroundColor: '#B69B02' }
+                        break
+                    case 'interviews':
+                        categoryLetter = 'E'
+                        categoryColor = { backgroundColor: '#C9007A' }
+                        break
+                }
+    
+                return (
+                    <TouchableOpacity style={styles.searchResultsCard} key={i}>
+                        <View style={styles.searchResultsCardMain}>
+                            <Image
+                                style={styles.searchResultsCardImage}
+                                source={require('../../assets/guides/news-honey.jpg')}
+                                defaultSource={require('../../assets/guides/news-honey.jpg')}
+                            />
+                            <Text style={styles.searchResultsCardTitle}>{e.title}</Text>
+                        </View>
+                        <View style={[styles.searchResultsCardCategoryContainer, categoryColor]}>
+                            <Text style={styles.searchResultsCardCategory}>{categoryLetter}</Text>
+                        </View>
+                    </TouchableOpacity>
+                )
+
+            })
+
+            if (newSearchResults.length > 0 && newSearchResults[0] !== null && typeof newSearchResults[0] !== 'undefined') {
+
+                setCurrentSearchResults(newSearchResults)
+
+            } else {
+
+                setCurrentSearchResults(nothingFound)
+
+            }
+
+        }
+
+    }, [searchInput])
+
+
+    const handleSearchDeleteIcon = () => {
+        setSearchInput('')
+    }
+
+
+    const handleSearchResultsCloseIcon = () => {
+        setSearchInput('')
+        Keyboard.dismiss()
     }
 
 
@@ -256,16 +361,9 @@ export default function GuidesScreen({ navigation }) {
 
     }
 
-
-    let dispSearchResults: object = { display: 'none' }
-    if (searchInput !== '') {
-        dispSearchResults = { display: 'flex' }
-        console.log('go')
-    }
-
     
     return (
-        <>
+    <>
         <KeyboardAwareScrollView
             enableResetScrollToCoords={false}
             scrollEnabled={globalScrollEnabled}
@@ -283,15 +381,17 @@ export default function GuidesScreen({ navigation }) {
                             imageStyle={styles.searchBackgroundImage}
                         >
                             <View style={styles.searchBackgroundImageOpacity}>
-                                <TextInput
-                                    style={styles.searchInput}
-                                    placeholder={searchInputPlaceholder}
-                                    placeholderTextColor='grey'
-                                    onFocus={() => handleSearchInputFocus()}
-                                    onBlur={() => handleSearchInputBlur()}
-                                    onChangeText={(e: string) => setSearchInput(e)}
-                                    value={searchInput}
-                                />
+                                <View style={styles.searchInputContainer}>
+                                    <TextInput
+                                        style={styles.searchInput}
+                                        placeholder={searchInputPlaceholder}
+                                        placeholderTextColor='grey'
+                                        onFocus={() => handleSearchInputFocus()}
+                                        onBlur={() => handleSearchInputBlur()}
+                                        onChangeText={(e: string) => setSearchInput(e)}
+                                        value={searchInput}
+                                    />
+                                </View> 
                             </View>
                         </ImageBackground>
 
@@ -324,57 +424,69 @@ export default function GuidesScreen({ navigation }) {
                             <Text style={styles.guidesTitle}>Découvrez nos guides conso</Text>
                             <View style={styles.guidesCardsContainer}>
 
-                                <TouchableWithoutFeedback>
+                                <TouchableOpacity style={styles.guidesCard} onPress={() => navigation.navigate('Category', { category: 'generalities' })} >
                                     <ImageBackground
-                                        style={styles.guidesCard}
+                                        style={styles.guidesCardImageBackgroundElement}
                                         imageStyle={styles.guidesCardImageBackground}
                                         source={require('../../assets/guides/guides-generalities.jpg')}
                                         defaultSource={require('../../assets/guides/guides-generalities.jpg')}
                                     >
+                                        <View style={[styles.guidesCardLetterContainer, { backgroundColor: '#004FC9' }]}>
+                                            <Text style={styles.guidesCardLetter}>G</Text>
+                                        </View>
                                         <View style={styles.guidesCardTitleContainer}>
                                             <Text style={styles.guidesCardTitle}>Guides{'\n'}généraux</Text>
                                         </View>
                                     </ImageBackground>
-                                </TouchableWithoutFeedback>
+                                </TouchableOpacity>
 
-                                <TouchableWithoutFeedback>
+                                <TouchableOpacity style={styles.guidesCard} onPress={() => navigation.navigate('Category', { category: 'products' })} >
                                     <ImageBackground
-                                        style={styles.guidesCard}
+                                        style={styles.guidesCardImageBackgroundElement}
                                         imageStyle={styles.guidesCardImageBackground}
                                         source={require('../../assets/guides/guides-products.jpg')}
                                         defaultSource={require('../../assets/guides/guides-products.jpg')}
                                     >
+                                        <View style={[styles.guidesCardLetterContainer, { backgroundColor: '#00993F' }]}>
+                                            <Text style={styles.guidesCardLetter}>P</Text>
+                                        </View>
                                         <View style={styles.guidesCardTitleContainer}>
                                             <Text style={styles.guidesCardTitle}>Fiches{'\n'}produits</Text>
                                         </View>
                                     </ImageBackground>
-                                </TouchableWithoutFeedback>
+                                </TouchableOpacity>
 
-                                <TouchableWithoutFeedback>
+                                <TouchableOpacity style={styles.guidesCard} onPress={() => navigation.navigate('Category', { category: 'labels' })} >
                                     <ImageBackground
-                                        style={styles.guidesCard}
+                                        style={styles.guidesCardImageBackgroundElement}
                                         imageStyle={styles.guidesCardImageBackground}
                                         source={require('../../assets/guides/guides-labels.jpg')}
                                         defaultSource={require('../../assets/guides/guides-labels.jpg')}
                                     >
+                                        <View style={[styles.guidesCardLetterContainer, { backgroundColor: '#B69B02' }]}>
+                                            <Text style={styles.guidesCardLetter}>L</Text>
+                                        </View>
                                         <View style={styles.guidesCardTitleContainer}>
                                             <Text style={styles.guidesCardTitle}>Labels & Co</Text>
                                         </View>
                                     </ImageBackground>
-                                </TouchableWithoutFeedback>
+                                </TouchableOpacity>
 
-                                <TouchableWithoutFeedback>
+                                <TouchableOpacity style={styles.guidesCard} onPress={() => navigation.navigate('Category', { category: 'interviews' })}>
                                     <ImageBackground
-                                        style={styles.guidesCard}
+                                        style={styles.guidesCardImageBackgroundElement}
                                         imageStyle={styles.guidesCardImageBackground}
                                         source={require('../../assets/guides/guides-interviews.jpg')}
                                         defaultSource={require('../../assets/guides/guides-interviews.jpg')}
                                     >
+                                        <View style={[styles.guidesCardLetterContainer, { backgroundColor: '#C9007A' }]}>
+                                            <Text style={styles.guidesCardLetter}>E</Text>
+                                        </View>
                                         <View style={styles.guidesCardTitleContainer}>
                                             <Text style={styles.guidesCardTitle}>Entretiens</Text>
                                         </View>
                                     </ImageBackground>
-                                </TouchableWithoutFeedback>
+                                </TouchableOpacity>
                             </View>
                         </View>
 
@@ -499,7 +611,7 @@ export default function GuidesScreen({ navigation }) {
                                     </View>
                                 </View>
 
-                                <View style={styles.postsCard}>
+                                <View style={[styles.postsCard, {borderBottomWidth: 0}]}>
                                     <View style={styles.postsCardHeader}>
                                         <View style={styles.postsCardAvatarContainer}>
                                             <Image style={styles.postsCardAvatar} source={require('../../assets/avatars/type3.png')} />
@@ -510,7 +622,7 @@ export default function GuidesScreen({ navigation }) {
                                         </View>
                                     </View>
                                     <View style={styles.postsCardMessageContainer}>
-                                        <Text style={styles.postsCardMessage}>Gg les payots ! Vous pouvez rajouter un guide sur la bière? C'est pour un ami 🍻</Text>
+                                        <Text style={styles.postsCardMessage}>Bien joué les payots ! Vous pouvez rajouter un guide sur la bière? C'est pour un ami 🍻</Text>
                                     </View>
                                     <View style={styles.postsCardFooter}>
                                         <TouchableWithoutFeedback>
@@ -561,15 +673,35 @@ export default function GuidesScreen({ navigation }) {
                 </SafeAreaView>
             </View>
         </KeyboardAwareScrollView>
-        <View style={[styles.searchResults, dispSearchResults]}>
-            <Text>Résultats de la recherche :</Text>
-            <View>
-                <View style={styles.searchResultCard}></View>
-            </View>
-        </View>
 
-        </>
-    )
+        
+        <TouchableOpacity style={[styles.searchDeleteIconBtn, dispSearchResults]} onPress={() => handleSearchDeleteIcon()}>
+            <MaterialCommunityIcon name='close' style={styles.searchDeleteIcon} />
+        </TouchableOpacity>
+
+
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <View style={[styles.searchResultsContainer, dispSearchResults]}>
+
+                <TouchableOpacity style={styles.searchResultsCloseIconBtn} onPress={() => handleSearchResultsCloseIcon()}>
+                    <MaterialCommunityIcon name='close' style={styles.searchResultsCloseIcon} />
+                </TouchableOpacity>
+
+                <Text style={styles.searchResultsTitle}>Résultats de la recherche</Text>
+
+                <View style={styles.searchResultsScrollViewWrapper}>
+                    <ScrollView
+                        style={styles.searchResultsScrollViewContainer}
+                        contentContainerStyle={styles.searchResultsScrollViewContent}
+                    >
+                        {currentSearchResults}
+                    </ScrollView>
+                </View>
+
+            </View>
+        </TouchableWithoutFeedback>
+
+    </>)
 }
 
 
@@ -622,7 +754,8 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             height: adaptToWidth(180),
             width: width,
             borderColor: 'black',
-            borderWidth: adaptToWidth(0.5)
+            borderBottomWidth: adaptToWidth(0.5),
+            borderTopWidth: adaptToWidth(0.5),
         },
         searchBackgroundImage: {
             height: '100%',
@@ -637,27 +770,142 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             alignItems: 'center',
             backgroundColor: 'rgba(50, 50, 50, 0.3)',
         },
+        searchDeleteIconBtn: {
+            position: 'absolute',
+            top: adaptToWidth(114),
+            right: adaptToWidth(21),
+            height: adaptToWidth(40),
+            width: adaptToWidth(40),
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        searchDeleteIcon: {
+            fontSize: adaptToWidth(26), // Laisser adaptToWidth(), insensible au fontScale
+            color: 'grey',
+        },
         searchInput: {
             fontSize: normalizeText(15),
-            width: '90%',
+            width: width - adaptToWidth(40),
             textAlign: 'left',
-            padding: adaptToWidth(14),
+            paddingLeft: adaptToWidth(14),
+            paddingVertical: adaptToWidth(14),
+            paddingRight: adaptToWidth(50),
             borderColor: 'black',
             borderWidth: adaptToWidth(0.5),
-            borderRadius: adaptToWidth(6),
+            borderRadius: adaptToWidth(8),
             marginBottom: adaptToWidth(22),
             backgroundColor: 'rgba(255, 255, 255, 0.9)',
         },
 
 
-        searchResults: {
+        searchResultsContainer: {
             position: 'absolute',
             top: adaptToWidth(180),
             width: width,
-            backgroundColor: 'red',
+            backgroundColor: '#E5E5E5',
             height: '100%',
             paddingBottom: adaptToWidth(180),
-            justifyContent: 'flex-end',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+        },
+        searchResultsCloseIconBtn: {
+            position: 'absolute',
+            right: adaptToWidth(14),
+            top: adaptToWidth(22),
+            height: adaptToWidth(40),
+            width: adaptToWidth(40),
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        searchResultsCloseIcon: {
+            fontSize: adaptToWidth(36), // Laisser adaptToWidth(), insensible au fontScale
+            color: 'grey',
+        },
+        searchResultsTitle: {
+            fontWeight: '600',
+            fontSize: normalizeText(20),
+            marginTop: adaptToWidth(30),
+            marginBottom: adaptToWidth(24),
+        },
+        searchResultsScrollViewWrapper: {
+            borderTopWidth: adaptToWidth(1),
+            borderBottomWidth: adaptToWidth(1),
+            borderColor: 'grey',
+            height: adaptToWidth(396),
+            width: width - adaptToWidth(40),
+        },
+        searchResultsScrollViewContainer: {
+            paddingTop: adaptToWidth(10),
+        },
+        searchResultsScrollViewContent: {
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingBottom: adaptToWidth(10),
+        },
+        searchResultsNoResultsView: {
+            height: adaptToWidth(80),
+            width: width - adaptToWidth(80),
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            marginTop: adaptToWidth(10),
+        },
+        searchResultsNoResultsText: {
+            fontWeight: '400',
+            fontSize: normalizeText(15),
+            textAlign: 'center',
+        },
+        searchResultsCard: {
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexDirection: 'row',
+            height: adaptToWidth(80),
+            width: width - adaptToWidth(80),
+            marginBottom: adaptToWidth(10),
+            backgroundColor: '#F2F2F2',
+            borderRadius: adaptToWidth(6),
+        },
+        searchResultsCardMain: {
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            borderTopWidth: adaptToWidth(0.5),
+            borderBottomWidth: adaptToWidth(0.5),
+            borderLeftWidth: adaptToWidth(0.5),
+            borderTopLeftRadius: adaptToWidth(6),
+            borderBottomLeftRadius: adaptToWidth(6),
+            borderColor: 'grey',
+            height: '100%',
+            width: width - adaptToWidth(110),
+            paddingLeft: adaptToWidth(10),
+        },
+        searchResultsCardImage: {
+            borderRadius: adaptToWidth(6),
+            borderWidth: adaptToWidth(0.5),
+            borderColor: 'grey',
+            width: adaptToWidth(60),
+            height: adaptToWidth(60),
+            backgroundColor: 'blue',
+        },
+        searchResultsCardTitle: {
+            fontWeight: '600',
+            fontSize: normalizeText(15),
+            marginLeft: adaptToWidth(10),
+            width: adaptToWidth(190),
+        },
+        searchResultsCardCategoryContainer: {
+            height: '100%',
+            width: adaptToWidth(30),
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderColor: 'grey',
+            borderWidth: adaptToWidth(0.5),
+            borderBottomRightRadius: adaptToWidth(6),
+            borderTopRightRadius: adaptToWidth(6),
+        },
+        searchResultsCardCategory: {
+            fontWeight: '500',
+            fontSize: normalizeText(15),
+            color: 'white',
         },
 
 
@@ -710,8 +958,8 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             color: 'white',
         },
         newsPremiumPricingFrequency: {
-            fontSize: normalizeText(20),
-            fontWeight: '500',
+            fontSize: normalizeText(19),
+            fontWeight: '600',
             color: '#F1A100',
         },
         newsPremiumBtn: {
@@ -854,7 +1102,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             alignItems: 'center',
         },
         newsBulletPoint: {
-            borderRadius: adaptToWidth(50),
+            borderRadius: 50,
         },
 
 
@@ -894,6 +1142,14 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             width: '45%',
             margin: adaptToWidth(8),
             borderRadius: adaptToWidth(6),
+            overflow: 'hidden',
+        },
+        guidesCardImageBackgroundElement: {
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            width: '100%',
+            overflow: 'hidden',
         },
         guidesCardImageBackground: {
             resizeMode: 'cover',
@@ -902,6 +1158,24 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             borderRadius: adaptToWidth(6),
             borderColor: 'black',
             borderWidth: adaptToWidth(0.5),
+        },
+        guidesCardLetterContainer: {
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            height: adaptToWidth(30),
+            width: adaptToWidth(30),
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderTopLeftRadius: adaptToWidth(6),
+            borderWidth: adaptToWidth(0.5),
+            borderRightWidth: adaptToWidth(0.5),
+            borderColor: 'black',
+        },
+        guidesCardLetter: {
+            fontSize: normalizeText(15),
+            fontWeight: '500',
+            color: 'white',
         },
         guidesCardTitleContainer: {
             justifyContent: 'center',
@@ -945,7 +1219,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             marginVertical: adaptToWidth(8),
             borderColor: 'grey',
             borderWidth: adaptToWidth(0.5),
-            borderRadius: adaptToWidth(6),
+            borderRadius: adaptToWidth(8),
             paddingHorizontal: '5%',
             paddingTop: adaptToWidth(14),
             paddingBottom: adaptToWidth(14),
@@ -971,16 +1245,15 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
 
 
         postsContainer: {
-            backgroundColor: 'rgba(175, 175, 175, 0.2)',
             justifyContent: 'flex-start',
             alignItems: 'center',
             paddingTop: adaptToWidth(30),
             paddingHorizontal: adaptToWidth(20),
             paddingBottom: adaptToWidth(20),
-            width: '100%',
-            borderRadius: adaptToWidth(8),
-            borderColor: 'grey',
-            borderWidth: adaptToWidth(0.5),
+            width: width,
+            borderTopColor: 'grey',
+            borderTopWidth: adaptToWidth(0.5),
+            marginTop: adaptToWidth(12),
         },
         postsTitle: {
             fontWeight: '600',
@@ -1016,7 +1289,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             width: adaptToWidth(36),
             borderColor: '#AFAFAF',
             borderWidth: adaptToWidth(0.5),
-            borderRadius: adaptToWidth(50),
+            borderRadius: 50,
             justifyContent: 'center',
             alignItems: 'center',
             marginRight: adaptToWidth(10),
@@ -1062,11 +1335,11 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             alignItems: 'center',
         },
         postsCardReactionIconContainer: {
-            height: adaptToWidth(24),
-            width: adaptToWidth(24),
-            borderRadius: adaptToWidth(50),
+            height: adaptToWidth(28),
+            width: adaptToWidth(28),
+            borderRadius: 50,
             borderWidth: adaptToWidth(0.5),
-            borderColor: 'grey',
+            borderColor: '#AFAFAF',
             justifyContent: 'center',
             alignItems: 'center',
             marginRight: adaptToWidth(5),
@@ -1074,22 +1347,22 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
         postsCardReactionIconHeart: {
             marginTop: adaptToWidth(1),
             color: "rgba(241, 161, 0, 0.5)",
-            fontSize: adaptToWidth(12), // Laisser adaptToWidth(), insensible au fontScale
+            fontSize: adaptToWidth(14), // Laisser adaptToWidth(), insensible au fontScale
         },
         postsCardReactionIconUp: {
             marginBottom: adaptToWidth(1),
             color: "rgba(50, 200, 50, 0.5)",
-            fontSize: adaptToWidth(16), // Laisser adaptToWidth(), insensible au fontScale
+            fontSize: adaptToWidth(18), // Laisser adaptToWidth(), insensible au fontScale
         },
         postsCardReactionIconDown: {
             marginTop: adaptToWidth(1),
             color: "rgba(240, 50, 50, 0.5)",
-            fontSize: adaptToWidth(16), // Laisser adaptToWidth(), insensible au fontScale
+            fontSize: adaptToWidth(18), // Laisser adaptToWidth(), insensible au fontScale
         },
         postsCardReactionIconAlert: {
             marginBottom: adaptToWidth(1),
             color: "rgba(0, 0, 0, 0.5)",
-            fontSize: adaptToWidth(12), // Laisser adaptToWidth(), insensible au fontScale
+            fontSize: adaptToWidth(14), // Laisser adaptToWidth(), insensible au fontScale
         },
         postsCardReactionCount: {
             fontSize: normalizeText(13),

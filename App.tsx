@@ -37,6 +37,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import WelcomeScreen from "./screens/connection/WelcomeScreen";
 import GuidesScreen from "./screens/guides/GuidesScreen";
+import CategoryScreen from "./screens/guides/CategoryScreen";
+import ArticleScreen from "./screens/guides/ArticleScreen";
 import BookmarksScreen from "./screens/bookmarks/BookmarksScreen";
 import OffersScreen from "./screens/offers/OffersScreen";
 import ListsScreen from "./screens/lists/ListsScreen";
@@ -45,6 +47,9 @@ import ExecutedScreen from "./screens/lists/ExecutedScreen";
 import ArchiveScreen from "./screens/lists/ArchiveScreen";
 
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
+
+
+
 
 export default function App() {
   const { height, width, fontScale } = useWindowDimensions();
@@ -104,6 +109,22 @@ export default function App() {
 
 
 
+  const GuidesStackNavigator = () => {
+    return (
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="GuidesHome" component={GuidesScreen} />
+        <Stack.Screen name="Category" component={CategoryScreen} />
+        <Stack.Screen name="Article" component={ArticleScreen} />
+      </Stack.Navigator>
+    )
+  }
+
+
+
   const TabNavigator = () => {
 
     return (
@@ -141,12 +162,12 @@ export default function App() {
           tabBarInactiveTintColor: "#AFAFAF",
           headerShown: true,
           headerTitle: (props: any) => <HeaderContent {...props} />,
-          headerStyle: {backgroundColor: '#002654'},
+          headerStyle: { backgroundColor: '#002654' },
         })}
       >
         <Tab.Screen
           name="Guides"
-          component={GuidesScreen}
+          component={GuidesStackNavigator}
           options={{ title: "Guides" }}
         />
         <Tab.Screen
@@ -223,7 +244,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       height: 38,
       width: 38,
       borderColor: "#AFAFAF",
-      borderRadius: 10,
+      borderRadius: 8,
       borderWidth: 1,
       justifyContent: "center",
       alignItems: "center",
