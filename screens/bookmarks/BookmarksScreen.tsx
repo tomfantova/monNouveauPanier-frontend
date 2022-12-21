@@ -33,8 +33,6 @@ export default function BookmarksScreen({ navigation }) {
     (state: { allGuides: AllGuidesState }) => state.allGuides.value
   );
 
-  // A finir : au clic sur favori, navigation vers affichage du guide //
-
   // Supprimer un favori //
 
   const handleRemoveBookmark = (bookmark) => {

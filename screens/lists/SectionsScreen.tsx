@@ -24,6 +24,7 @@ import {
 } from "../../reducers/currentList";
 import { addList, deleteList } from "../../reducers/user";
 import { modifyFalse } from "../../reducers/modifyList";
+import { AllGuidesState } from "../../reducers/allGuides";
 
 export default function SectionsScreen({ navigation }) {
   const { height, width, fontScale } = useWindowDimensions();
@@ -36,6 +37,9 @@ export default function SectionsScreen({ navigation }) {
   const dispatch = useDispatch();
   const currentList = useSelector(
     (state: { currentList: UserState }) => state.currentList.value
+  );
+  const guides = useSelector(
+    (state: { allGuides: AllGuidesState }) => state.allGuides.value
   );
 
   // Ajouter un rayon dont ouverture et fermeture modale //
@@ -138,11 +142,28 @@ export default function SectionsScreen({ navigation }) {
 
   const inputs: JSX.Element[] = [];
   for (let i = 0; i < numInputs; i++) {
+    //
+    // Regex pour voir si l'article correspond à un guide //
+    //
+    let articleToTest = refInputs.current[i];
+    let iColor = "#c8c8c8";
+    guides.map((guidesData, i) => {
+      let regexString = guidesData.title;
+      let regex = new RegExp(regexString, "gi");
+      if (regex.test(articleToTest)) {
+        iColor = "#002654";
+      }
+    });
+    //
+    // // Finalement, affichage des articles //
+    //
     inputs.push(
       <View style={styles.articlesCard} key={i}>
-        <TouchableOpacity activeOpacity={0.8}>
-          <FontAwesome name="info-circle" size={25} color="#002654" />
-        </TouchableOpacity>
+        <View style={styles.info}>
+          <TouchableOpacity activeOpacity={0.8}>
+            <FontAwesome name="info-circle" size={25} color={iColor} />
+          </TouchableOpacity>
+        </View>
         <TextInput
           onChangeText={(value) => setInputValue(i, value)}
           value={refInputs.current[i]}
@@ -531,7 +552,8 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       marginBottom: adaptToWidth(55),
     },
     modalView2: {
-      height: adaptToWidth(730),
+      marginBottom: adaptToWidth(40),
+      height: adaptToWidth(640),
       width: adaptToWidth(380),
       backgroundColor: "#f1f5f8",
       borderRadius: adaptToWidth(20),
@@ -632,6 +654,10 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
     },
     addText: {
       fontSize: normalizeText(15),
+    },
+    info: {
+      width: adaptToWidth(30),
+      alignItems: "flex-end",
     },
   });
 };

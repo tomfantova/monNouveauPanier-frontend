@@ -12,7 +12,6 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useDispatch, useSelector } from "react-redux";
-import { emptyLists } from "../../reducers/user";
 import {
   addExecutedList,
   removeExecutedList,
@@ -32,11 +31,6 @@ export default function ListsScreen({ navigation }) {
   const modifyList = useSelector(
     (state: { modifyList: UserState }) => state.modifyList.value
   );
-
-  // A enlever : supprimer toutes les listes des reducers pour test //
-
-  // dispatch(emptyLists());
-  // dispatch(removeExecutedList());
 
   // Ajouter une nouvelle liste au reducer currentList //
 
