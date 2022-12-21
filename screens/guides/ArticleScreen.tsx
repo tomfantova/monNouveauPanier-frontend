@@ -62,14 +62,6 @@ export default function ArticleScreen({ navigation, route }) {
       break;
   }
 
-  const currentArticleTitle = () => {
-    if (currentArticle.title.length > 10) {
-      return "Notre guide conso";
-    } else {
-      return currentArticle.title;
-    }
-  };
-
   const currentArticleResume = () => {
     const resumeContent = [<Text>Résumé</Text>];
     currentArticle.resume.subtitles.forEach((e, i) => {
