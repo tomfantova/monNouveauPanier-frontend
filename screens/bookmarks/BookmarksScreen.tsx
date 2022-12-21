@@ -40,7 +40,7 @@ export default function BookmarksScreen({ navigation }) {
 
   // // Produit en dur pour tests, à remplacer par l'ID du produit affiché depuis reducer guides //
 
-  const product = guides[2]._id;
+  // const product = guides[2]._id;
 
   // // Dispatch de l'ID du produit dans reducer user + BDD, ajouter cette fonction sur le bouton //
 

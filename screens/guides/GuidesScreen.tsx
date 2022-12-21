@@ -1,7 +1,7 @@
 import React from 'react'
 import { Image, ImageBackground, Keyboard, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-
+import { REACT_APP_BACKEND_URL } from "react-native-dotenv";
 import { useDispatch, useSelector } from 'react-redux'
 import { updateAllGuides, AllGuidesState } from '../../reducers/allGuides'
 import { useEffect, useRef, useState } from 'react'
@@ -46,7 +46,7 @@ export default function GuidesScreen({ navigation }) {
 
 
     useEffect(() => {
-        fetch('http://192.168.1.79:3000/guides/all')
+        fetch(`${REACT_APP_BACKEND_URL}/guides/all`)
         .then(response => response.json())
         .then(dbAllGuidesData => {
             const dbAllGuides = dbAllGuidesData.allGuides
