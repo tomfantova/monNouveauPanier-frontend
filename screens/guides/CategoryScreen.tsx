@@ -51,7 +51,7 @@ export default function CategoryScreen({ navigation, route }) {
                     <Image
                         style={styles.categoryCardImage}
                         source={require('../../assets/guides/news-honey.jpg')}
-                        defaultSource={require('../../assets/guides/news-honey.jpg')}
+                        // defaultSource={require('../../assets/guides/news-honey.jpg')}
                     />
                     <Text style={styles.categoryCardTitle}>{e.title}</Text>
                 </View>
@@ -217,7 +217,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
             borderColor: 'grey',
             width: adaptToHeight(60),
             height: adaptToHeight(60),
-            backgroundColor: 'blue',
+            backgroundColor: '#F2F2F2',
         },
         categoryCardTitle: {
             fontWeight: '600',

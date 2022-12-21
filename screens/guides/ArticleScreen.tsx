@@ -76,9 +76,9 @@ export default function ArticleScreen({ navigation, route }) {
         const articleContent = [
             <Text>Corps de l'article</Text>
         ]
-        currentArticle.resume.subtitles.forEach((e, i) => {
+        currentArticle.main.subtitles.forEach((e, i) => {
             articleContent.push(
-                <View key={i + 1}>
+                <View key={i + currentArticle.resume.subtitles.length}>
                     <Text>{currentArticle.main.subtitles[i]}</Text>
                     <Text>{currentArticle.main.paragraphs[i]}</Text>
                 </View>
