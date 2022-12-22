@@ -3,6 +3,7 @@ import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, us
 
 import { useSelector } from 'react-redux'
 import { AllGuidesState } from '../../reducers/allGuides'
+import { useState } from 'react'
 
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -14,6 +15,41 @@ export default function CategoryScreen({ navigation, route }) {
     const styles: any = makeStyles(height, width, fontScale)
 
     const allGuides = useSelector((state: { allGuides: AllGuidesState }) => state.allGuides.value)
+
+    const [globalImages, setGlobalImages] = useState({
+        balsalmicVinegar: require('../../assets/products/balsamic-vinegar.jpg'),
+        beef: require('../../assets/products/beef.jpg'),
+        biscuits: require('../../assets/products/biscuits.jpg'),
+        bread: require('../../assets/products/bread.jpg'),
+        butter: require('../../assets/products/butter.jpg'),
+        cereals: require('../../assets/products/cereals.jpg'),
+        charcuterie: require('../../assets/products/charcuterie.jpg'),
+        chicken: require('../../assets/products/chicken.jpg'),
+        eggs: require('../../assets/products/eggs.jpg'),
+        exoticFruits: require('../../assets/products/exotic-fruits.jpg'),
+        fish: require('../../assets/products/fish.jpg'),
+        fromages: require('../../assets/products/fromages.jpg'),
+        fruitJuices: require('../../assets/products/fruit-juices.jpg'),
+        fruits: require('../../assets/products/fruits.jpg'),
+        honey: require('../../assets/products/honey.jpg'),
+        milk: require('../../assets/products/milk.jpg'),
+        mustard: require('../../assets/products/mustard.jpg'),
+        oliveOil: require('../../assets/products/olive-oil.jpg'),
+        pasta: require('../../assets/products/pasta.jpg'),
+        pastries: require('../../assets/products/pastries.jpg'),
+        readyMeals: require('../../assets/products/ready-meals.jpg'),
+        rice: require('../../assets/products/rice.jpg'),
+        salt: require('../../assets/products/salt.jpg'),
+        spices: require('../../assets/products/spices.jpg'),
+        spirits: require('../../assets/products/spirits.jpg'),
+        terrines: require('../../assets/products/terrines.jpg'),
+        vegetables: require('../../assets/products/vegetables.jpg'),
+        vegetalOils: require('../../assets/products/vegetal-oils.jpg'),
+        viennoiseries: require('../../assets/products/viennoiseries.jpg'),
+        vinegar: require('../../assets/products/vinegar.jpg'),
+        wines: require('../../assets/products/wines.jpg'),
+        yogourts: require('../../assets/products/yogourts.jpg'),
+    })
 
 
     let categoryName: string = 'Nos guides conso'
@@ -50,8 +86,8 @@ export default function CategoryScreen({ navigation, route }) {
                 <View style={styles.categoryCardMain}>
                     <Image
                         style={styles.categoryCardImage}
-                        source={require('../../assets/guides/news-honey.jpg')}
-                        // defaultSource={require('../../assets/guides/news-honey.jpg')}
+                        source={globalImages[`${e.images.main}`]}
+                        // defaultSource={globalImages[`${e.images.main}`]}
                     />
                     <Text style={styles.categoryCardTitle}>{e.title}</Text>
                 </View>

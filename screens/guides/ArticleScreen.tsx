@@ -15,8 +15,6 @@ export default function ArticleScreen({ navigation, route }) {
     const styles: any = makeStyles(height, width, fontScale)
 
     const allGuides = useSelector((state: { allGuides: AllGuidesState }) => state.allGuides.value)
-
-
     const currentArticle: any = allGuides.filter(e => e._id.toString() === route.params._id.toString())[0]
 
 
@@ -57,10 +55,8 @@ export default function ArticleScreen({ navigation, route }) {
     }
 
     const currentArticleResume = () => {
-        const resumeContent = [
-            <Text>Résumé</Text>
-        ]
-        currentArticle.resume.subtitles.forEach((e, i) => {
+        const resumeContent = []
+        currentArticle.resume.subtitles.forEach((e: object, i: number) => {
             resumeContent.push(
                 <View key={i}>
                     <Text>{currentArticle.resume.subtitles[i]}</Text>
@@ -73,10 +69,8 @@ export default function ArticleScreen({ navigation, route }) {
 
 
     const currentArticleContent = () => {
-        const articleContent = [
-            <Text>Corps de l'article</Text>
-        ]
-        currentArticle.main.subtitles.forEach((e, i) => {
+        const articleContent = []
+        currentArticle.main.subtitles.forEach((e: object, i: number) => {
             articleContent.push(
                 <View key={i + currentArticle.resume.subtitles.length}>
                     <Text>{currentArticle.main.subtitles[i]}</Text>

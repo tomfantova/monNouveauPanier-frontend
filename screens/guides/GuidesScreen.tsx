@@ -20,7 +20,42 @@ export default function GuidesScreen({ navigation }) {
 
     const globalScrollRef = useRef<any>()
     const [globalScrollEnabled, setGlobalScrollEnabled] = useState(true)
+    const [globalImages, setGlobalImages] = useState({
+        balsalmicVinegar: require('../../assets/products/balsamic-vinegar.jpg'),
+        beef: require('../../assets/products/beef.jpg'),
+        biscuits: require('../../assets/products/biscuits.jpg'),
+        bread: require('../../assets/products/bread.jpg'),
+        butter: require('../../assets/products/butter.jpg'),
+        cereals: require('../../assets/products/cereals.jpg'),
+        charcuterie: require('../../assets/products/charcuterie.jpg'),
+        chicken: require('../../assets/products/chicken.jpg'),
+        eggs: require('../../assets/products/eggs.jpg'),
+        exoticFruits: require('../../assets/products/exotic-fruits.jpg'),
+        fish: require('../../assets/products/fish.jpg'),
+        fromages: require('../../assets/products/fromages.jpg'),
+        fruitJuices: require('../../assets/products/fruit-juices.jpg'),
+        fruits: require('../../assets/products/fruits.jpg'),
+        honey: require('../../assets/products/honey.jpg'),
+        milk: require('../../assets/products/milk.jpg'),
+        mustard: require('../../assets/products/mustard.jpg'),
+        oliveOil: require('../../assets/products/olive-oil.jpg'),
+        pasta: require('../../assets/products/pasta.jpg'),
+        pastries: require('../../assets/products/pastries.jpg'),
+        readyMeals: require('../../assets/products/ready-meals.jpg'),
+        rice: require('../../assets/products/rice.jpg'),
+        salt: require('../../assets/products/salt.jpg'),
+        spices: require('../../assets/products/spices.jpg'),
+        spirits: require('../../assets/products/spirits.jpg'),
+        terrines: require('../../assets/products/terrines.jpg'),
+        vegetables: require('../../assets/products/vegetables.jpg'),
+        vegetalOils: require('../../assets/products/vegetal-oils.jpg'),
+        viennoiseries: require('../../assets/products/viennoiseries.jpg'),
+        vinegar: require('../../assets/products/vinegar.jpg'),
+        wines: require('../../assets/products/wines.jpg'),
+        yogourts: require('../../assets/products/yogourts.jpg'),
+    })
 
+    const searchInputRef = useRef<any>()
     const initialSearchInputPlaceholder: string = '🔍  Rechercher un guide conso'
     const initialCurrentSearchResults: JSX.Element[] = [
         <View style={styles.searchResultsNoResultsView} key={0}>
@@ -46,7 +81,7 @@ export default function GuidesScreen({ navigation }) {
 
 
     useEffect(() => {
-        fetch('http://192.168.1.79:3000/guides/all')
+        fetch('http://10.2.0.153:3000/guides/all')
         .then(response => response.json())
         .then(dbAllGuidesData => {
             const dbAllGuides = dbAllGuidesData.allGuides
@@ -119,12 +154,12 @@ export default function GuidesScreen({ navigation }) {
                 }
     
                 return (
-                    <TouchableOpacity style={styles.searchResultsCard} key={i}>
+                    <TouchableOpacity style={styles.searchResultsCard} key={i} onPress={() => navigation.navigate('Article', { _id: e._id, ref: 5 })}>
                         <View style={styles.searchResultsCardMain}>
                             <Image
                                 style={styles.searchResultsCardImage}
-                                source={require('../../assets/guides/news-honey.jpg')}
-                                // defaultSource={require('../../assets/guides/news-honey.jpg')}
+                                source={globalImages[`${e.images.main}`]}
+                                // defaultSource={globalImages[`${e.images.main}`]}
                             />
                             <Text style={styles.searchResultsCardTitle}>{e.title}</Text>
                         </View>
@@ -153,6 +188,7 @@ export default function GuidesScreen({ navigation }) {
 
     const handleSearchDeleteIcon = () => {
         setSearchInput('')
+        searchInputRef.current.focus()
     }
 
 
@@ -203,7 +239,7 @@ export default function GuidesScreen({ navigation }) {
                 <Text style={styles.newsSecondTeaser}>
                     Le miel est le produit alimentaire le plus fraudé au monde. Afin d'éviter les pièges, nous avons mené l'enquête pour vous.
                 </Text>
-                <TouchableOpacity style={styles.newsSecondBtn}>
+                <TouchableOpacity style={styles.newsSecondBtn} onPress={() => navigation.navigate('Article', { _id: '63a04aee7330f20765789857', ref: 5 })}>
                     <Text style={styles.newsSecondBtnText}>Voir l'article</Text>
                 </TouchableOpacity>
             </View>
@@ -383,6 +419,7 @@ export default function GuidesScreen({ navigation }) {
                             <View style={styles.searchBackgroundImageOpacity}>
                                 <View style={styles.searchInputContainer}>
                                     <TextInput
+                                        ref={searchInputRef}
                                         style={styles.searchInput}
                                         placeholder={searchInputPlaceholder}
                                         placeholderTextColor='grey'
@@ -680,26 +717,26 @@ export default function GuidesScreen({ navigation }) {
         </TouchableOpacity>
 
 
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            <View style={[styles.searchResultsContainer, dispSearchResults]}>
 
-                <TouchableOpacity style={styles.searchResultsCloseIconBtn} onPress={() => handleSearchResultsCloseIcon()}>
-                    <MaterialCommunityIcon name='close' style={styles.searchResultsCloseIcon} />
-                </TouchableOpacity>
+        <View style={[styles.searchResultsContainer, dispSearchResults]}>
 
-                <Text style={styles.searchResultsTitle}>Résultats de la recherche</Text>
+            <TouchableOpacity style={styles.searchResultsCloseIconBtn} onPress={() => handleSearchResultsCloseIcon()}>
+                <MaterialCommunityIcon name='close' style={styles.searchResultsCloseIcon} />
+            </TouchableOpacity>
 
-                <View style={styles.searchResultsScrollViewWrapper}>
-                    <ScrollView
-                        style={styles.searchResultsScrollViewContainer}
-                        contentContainerStyle={styles.searchResultsScrollViewContent}
-                    >
-                        {currentSearchResults}
-                    </ScrollView>
-                </View>
+            <Text style={styles.searchResultsTitle}>Résultats de la recherche</Text>
 
+            <View style={styles.searchResultsScrollViewWrapper}>
+                <ScrollView
+                    style={styles.searchResultsScrollViewContainer}
+                    contentContainerStyle={styles.searchResultsScrollViewContent}
+                >
+                    {currentSearchResults}
+                </ScrollView>
             </View>
-        </TouchableWithoutFeedback>
+
+        </View>
+
 
     </>)
 }
