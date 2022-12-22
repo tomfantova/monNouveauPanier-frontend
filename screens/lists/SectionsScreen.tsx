@@ -140,6 +140,18 @@ export default function SectionsScreen({ navigation }) {
     setNumInputs((value) => value - 1);
   };
 
+  // // Navigation vers le guide produit si existant //
+
+  const handleOpenGuide = (guide) => {
+    if (guide) {
+      navigation.navigate("Article", {
+        _id: guide,
+        ref: "5",
+      });
+      handleCloseModalArticles();
+    }
+  };
+
   const inputs: JSX.Element[] = [];
   for (let i = 0; i < numInputs; i++) {
     //
@@ -147,11 +159,13 @@ export default function SectionsScreen({ navigation }) {
     //
     let articleToTest = refInputs.current[i];
     let iColor = "#c8c8c8";
+    let guideId = "";
     guides.map((guidesData, i) => {
       let regexString = guidesData.title;
       let regex = new RegExp(regexString, "gi");
       if (regex.test(articleToTest)) {
         iColor = "#002654";
+        guideId = guidesData._id;
       }
     });
     //
@@ -160,7 +174,10 @@ export default function SectionsScreen({ navigation }) {
     inputs.push(
       <View style={styles.articlesCard} key={i}>
         <View style={styles.info}>
-          <TouchableOpacity activeOpacity={0.8}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => handleOpenGuide(guideId)}
+          >
             <FontAwesome name="info-circle" size={25} color={iColor} />
           </TouchableOpacity>
         </View>

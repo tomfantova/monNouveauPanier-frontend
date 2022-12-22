@@ -18,7 +18,7 @@ import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIc
 import { AllGuidesState } from "../../reducers/allGuides";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
-export default function BookmarksScreen({ navigation }) {
+export default function BookmarksScreen({ navigation, route }) {
   const dispatch = useDispatch();
   const { height, width, fontScale } = useWindowDimensions();
   const styles = makeStyles(height, width, fontScale);
@@ -82,7 +82,16 @@ export default function BookmarksScreen({ navigation }) {
         }
         return (
           <View style={styles.card} key={i}>
-            <TouchableOpacity style={styles.button} activeOpacity={0.8}>
+            <TouchableOpacity
+              style={styles.button}
+              activeOpacity={0.8}
+              onPress={() =>
+                navigation.navigate("Article", {
+                  _id: bookmarksData,
+                  ref: "5",
+                })
+              }
+            >
               <Text style={styles.textButton}>{name}</Text>
               <Text style={styles.textDate}>Mis à jour en {date}</Text>
             </TouchableOpacity>

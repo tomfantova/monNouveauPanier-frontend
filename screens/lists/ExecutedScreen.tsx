@@ -57,6 +57,18 @@ export default function ExecutedScreen({ navigation }) {
     );
   };
 
+  // // Navigation vers le guide produit si existant //
+
+  const handleOpenGuide = (guide) => {
+    if (guide) {
+      navigation.navigate("Article", {
+        _id: guide,
+        ref: "5",
+      });
+      handleCloseModalArticles();
+    }
+  };
+
   // // Récupération de l'index du rayon pour map sur articles //
 
   const index = executedList.categories.map((e) => e.name).indexOf(catOpened);
@@ -88,11 +100,13 @@ export default function ExecutedScreen({ navigation }) {
         // Regex pour voir si l'article correspond à un guide //
         //
         let iColor = "#c8c8c8";
+        let guideId = "";
         guides.map((guidesData, i) => {
           let regexString = guidesData.title;
           let regex = new RegExp(regexString, "gi");
           if (regex.test(articlesData.name)) {
             iColor = "#002654";
+            guideId = guidesData._id;
           }
         });
         //
@@ -102,7 +116,10 @@ export default function ExecutedScreen({ navigation }) {
           <View key={i}>
             <View style={styles.articlesCard}>
               <View style={styles.info}>
-                <TouchableOpacity activeOpacity={0.8}>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => handleOpenGuide(guideId)}
+                >
                   <FontAwesome name="info-circle" size={25} color={iColor} />
                 </TouchableOpacity>
               </View>
