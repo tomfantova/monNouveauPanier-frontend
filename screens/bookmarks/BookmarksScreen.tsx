@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { REACT_APP_BACKEND_URL } from "react-native-dotenv";
 import {
@@ -12,12 +12,11 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { UserState, addBookmark, deleteBookmark } from "../../reducers/user";
+import { UserState, deleteBookmark } from "../../reducers/user";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import { AllGuidesState } from "../../reducers/allGuides";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { iteratorSymbol } from "immer/dist/internal";
 
 export default function BookmarksScreen({ navigation }) {
   const dispatch = useDispatch();
@@ -33,33 +32,6 @@ export default function BookmarksScreen({ navigation }) {
   const guides = useSelector(
     (state: { allGuides: AllGuidesState }) => state.allGuides.value
   );
-
-  // A finir : au clic sur favori, navigation vers affichage du guide //
-
-  // A enlever et migrer dans l'écran des produits : ajouter un favori //
-
-  // // Produit en dur pour tests, à remplacer par l'ID du produit affiché depuis reducer guides //
-
-  const product = guides[2]._id;
-
-  // // Dispatch de l'ID du produit dans reducer user + BDD, ajouter cette fonction sur le bouton //
-
-  const handleAddBookmark = (product) => {
-    fetch(`${REACT_APP_BACKEND_URL}/bookmarks/add`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        token: "testToken",
-        id: product,
-      }),
-    }).then((response) => response.json());
-    dispatch(addBookmark(product));
-  };
-
-  //   Simulation du bouton à intégrer //
-  //   useEffect(() => {
-  //     handleAddBookmark(product);
-  //   }, []);
 
   // Supprimer un favori //
 

@@ -37,9 +37,6 @@ export const userSlice = createSlice({
     addList: (state, action: PayloadAction<any>) => {
       state.value.lists.push(action.payload);
     },
-    emptyLists: (state) => {
-      state.value.lists = [];
-    },
     changeListStatus: (state, action: PayloadAction<any>) => {
       const targetIndex: number = state.value.lists
         .map((e: any) => e.id)
@@ -67,7 +64,6 @@ export const userSlice = createSlice({
 export const {
   connectUser,
   addList,
-  emptyLists,
   changeListStatus,
   deleteList,
   addBookmark,

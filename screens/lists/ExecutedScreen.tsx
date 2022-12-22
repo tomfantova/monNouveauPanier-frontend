@@ -21,6 +21,7 @@ import {
   UserState,
 } from "../../reducers/executedList";
 import { changeListStatus } from "../../reducers/user";
+import { AllGuidesState } from "../../reducers/allGuides";
 import { modifyTrue } from "../../reducers/modifyList";
 
 export default function ExecutedScreen({ navigation }) {
@@ -31,6 +32,9 @@ export default function ExecutedScreen({ navigation }) {
   const dispatch = useDispatch();
   const executedList = useSelector(
     (state: { executedList: UserState }) => state.executedList.value
+  );
+  const guides = useSelector(
+    (state: { allGuides: AllGuidesState }) => state.allGuides.value
   );
 
   // Afficher les articles d'un rayon dont ouverture et fermeture modale //
@@ -80,12 +84,28 @@ export default function ExecutedScreen({ navigation }) {
           inputStyle = "#c8c8c8";
           textStyle = { textDecorationLine: "line-through" };
         }
+        //
+        // Regex pour voir si l'article correspond à un guide //
+        //
+        let iColor = "#c8c8c8";
+        guides.map((guidesData, i) => {
+          let regexString = guidesData.title;
+          let regex = new RegExp(regexString, "gi");
+          if (regex.test(articlesData.name)) {
+            iColor = "#002654";
+          }
+        });
+        //
+        // // Finalement, affichage des articles //
+        //
         return (
           <View key={i}>
             <View style={styles.articlesCard}>
-              <TouchableOpacity activeOpacity={0.8}>
-                <FontAwesome name="info-circle" size={25} color="#002654" />
-              </TouchableOpacity>
+              <View style={styles.info}>
+                <TouchableOpacity activeOpacity={0.8}>
+                  <FontAwesome name="info-circle" size={25} color={iColor} />
+                </TouchableOpacity>
+              </View>
               <View
                 style={[styles.articlesInput, { backgroundColor: inputStyle }]}
               >
@@ -338,7 +358,8 @@ const makeStyles = (height, width, fontScale) => {
       marginBottom: adaptToWidth(55),
     },
     modalView: {
-      height: adaptToWidth(730),
+      marginBottom: adaptToWidth(40),
+      height: adaptToWidth(640),
       width: adaptToWidth(380),
       backgroundColor: "#f1f5f8",
       borderRadius: adaptToWidth(20),
@@ -412,6 +433,10 @@ const makeStyles = (height, width, fontScale) => {
     },
     nameText: {
       fontSize: normalizeText(15),
+    },
+    info: {
+      width: adaptToWidth(30),
+      alignItems: "flex-end",
     },
   });
 };
