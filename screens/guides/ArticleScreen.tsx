@@ -144,7 +144,7 @@ export default function ArticleScreen({ navigation, route }) {
     }
   };
 
-  // // Gestion des images (require ne prend que les Strings en dur) //
+  // Gestion des images (require ne prend que les Strings en dur) //
 
   const honey = require("../../assets/guides/news-honey.jpg");
   let image = {};
@@ -212,7 +212,7 @@ export default function ArticleScreen({ navigation, route }) {
                       {currentArticle.title}
                     </Text>
 
-                    <Text style={styles.dateText}>
+                    <Text style={styles.regularText}>
                       Mis à jour en {currentArticle.date.slice(0, 4)}
                     </Text>
                     <View style={styles.allTags}>{tags}</View>
