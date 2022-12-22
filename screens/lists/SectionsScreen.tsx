@@ -20,9 +20,9 @@ import {
   addCategory,
   removeCategory,
   addArticles,
-  UserState,
+  CurrentListState,
 } from "../../reducers/currentList";
-import { addList, deleteList } from "../../reducers/user";
+import user, { addList, deleteList, UserState } from "../../reducers/user";
 import { modifyFalse } from "../../reducers/modifyList";
 import { AllGuidesState } from "../../reducers/allGuides";
 
@@ -36,11 +36,13 @@ export default function SectionsScreen({ navigation }) {
   const [catOpened, setCatOpened] = useState("");
   const dispatch = useDispatch();
   const currentList = useSelector(
-    (state: { currentList: UserState }) => state.currentList.value
+    (state: { currentList: CurrentListState }) => state.currentList.value
   );
   const guides = useSelector(
     (state: { allGuides: AllGuidesState }) => state.allGuides.value
   );
+
+  const user = useSelector((state: { user: UserState }) => state.user.value);
 
   // Ajouter un rayon dont ouverture et fermeture modale //
 
@@ -287,7 +289,7 @@ export default function SectionsScreen({ navigation }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         listId: currentList.id,
-        token: "testToken",
+        token: user.token,
       }),
     }).then((response) => response.json());
     dispatch(deleteList(currentList.id));
@@ -295,7 +297,7 @@ export default function SectionsScreen({ navigation }) {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        token: "testToken",
+        token: user.token,
         list: currentList,
       }),
     }).then((response) => response.json());

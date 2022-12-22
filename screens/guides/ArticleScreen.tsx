@@ -98,7 +98,7 @@ export default function ArticleScreen({ navigation, route }) {
   }
 
   const currentArticleResume = () => {
-    const resumeContent = [<Text>Résumé</Text>];
+    const resumeContent = [];
     currentArticle.resume.subtitles.forEach((e, i) => {
       resumeContent.push(
         <View key={i}>
@@ -111,7 +111,7 @@ export default function ArticleScreen({ navigation, route }) {
   };
 
   const currentArticleContent = () => {
-    const articleContent = [<Text>Corps de l'article</Text>];
+    const articleContent = [];
 
     currentArticle.main.subtitles.forEach((e, i) => {
       articleContent.push(
@@ -145,7 +145,7 @@ export default function ArticleScreen({ navigation, route }) {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          token: "testToken",
+          token: user.token,
           id: product,
         }),
       }).then((response) => response.json());
@@ -155,7 +155,7 @@ export default function ArticleScreen({ navigation, route }) {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          token: "testToken",
+          token: user.token,
           id: product,
         }),
       }).then((response) => response.json());

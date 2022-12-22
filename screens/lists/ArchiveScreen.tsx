@@ -14,8 +14,8 @@ import {
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useDispatch, useSelector } from "react-redux";
-import { UserState } from "../../reducers/executedList";
-import { changeListStatus, deleteList } from "../../reducers/user";
+import { ExecutedListState } from "../../reducers/executedList";
+import { changeListStatus, deleteList, UserState } from "../../reducers/user";
 import { AllGuidesState } from "../../reducers/allGuides";
 
 export default function ArchiveScreen({ navigation }) {
@@ -25,11 +25,13 @@ export default function ArchiveScreen({ navigation }) {
   const [catOpened, setCatOpened] = useState("");
   const dispatch = useDispatch();
   const executedList = useSelector(
-    (state: { executedList: UserState }) => state.executedList.value
+    (state: { executedList: ExecutedListState }) => state.executedList.value
   );
   const guides = useSelector(
     (state: { allGuides: AllGuidesState }) => state.allGuides.value
   );
+  const user = useSelector((state: { user: UserState }) => state.user.value);
+
 
   // Afficher les articles d'un rayon dont ouverture et fermeture modale //
 
@@ -183,7 +185,7 @@ export default function ArchiveScreen({ navigation }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         listId: executedList.id,
-        token: "testToken",
+        token: user.token,
       }),
     }).then((response) => response.json());
     dispatch(deleteList(executedList.id));

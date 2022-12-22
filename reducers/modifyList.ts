@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export type UserState = {
+export type ModifyListState = {
   value: Boolean;
 };
 
-const initialState: UserState = {
+const initialState: ModifyListState = {
   value: false,
 };
 
@@ -12,10 +12,10 @@ export const modifyListSlice = createSlice({
   name: "modifyList",
   initialState,
   reducers: {
-    modifyTrue: (state: UserState) => {
+    modifyTrue: (state: ModifyListState) => {
       state.value = true;
     },
-    modifyFalse: (state: UserState) => {
+    modifyFalse: (state: ModifyListState) => {
       state.value = false;
     },
   },

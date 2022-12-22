@@ -18,7 +18,7 @@ import { addCurrentList } from "../../reducers/currentList";
 import {
   changeArticleStatus,
   removeExecutedList,
-  UserState,
+  ExecutedListState,
 } from "../../reducers/executedList";
 import { changeListStatus } from "../../reducers/user";
 import { AllGuidesState } from "../../reducers/allGuides";
@@ -31,7 +31,7 @@ export default function ExecutedScreen({ navigation }) {
   const [catOpened, setCatOpened] = useState("");
   const dispatch = useDispatch();
   const executedList = useSelector(
-    (state: { executedList: UserState }) => state.executedList.value
+    (state: { executedList: ExecutedListState }) => state.executedList.value
   );
   const guides = useSelector(
     (state: { allGuides: AllGuidesState }) => state.allGuides.value

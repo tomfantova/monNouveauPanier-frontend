@@ -40,7 +40,7 @@ export default function BookmarksScreen({ navigation }) {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        token: "testToken",
+        token: user.token,
         id: bookmark,
       }),
     }).then((response) => response.json());

@@ -5,6 +5,8 @@ import { REACT_APP_BACKEND_URL } from "react-native-dotenv";
 import { useDispatch, useSelector } from 'react-redux'
 import { updateAllGuides, AllGuidesState } from '../../reducers/allGuides'
 import { useEffect, useRef, useState } from 'react'
+import { logoutUser, UserState } from "../../reducers/user";
+
 
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -17,6 +19,9 @@ export default function GuidesScreen({ navigation }) {
 
     const dispatch = useDispatch()
     const allGuides = useSelector((state: { allGuides: AllGuidesState }) => state.allGuides.value)
+    const user = useSelector((state: { user: UserState }) => state.user.value);
+
+    console.log(user)
 
     const globalScrollRef = useRef<any>()
     const [globalScrollEnabled, setGlobalScrollEnabled] = useState(true)

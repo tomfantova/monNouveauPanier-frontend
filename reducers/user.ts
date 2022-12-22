@@ -5,8 +5,16 @@ export type UserState = {
     firstname: string | null;
     lastname: string | null;
     email: string | null;
+    date: Date | null,
     token: string | null;
-    preferences: {};
+    preferences: {
+      type: number | null,
+      dietetique: number | null,
+      bilan: number | null,
+      ethique: number | null,
+      local: number | null,
+      agriculture: number | null,    
+    };
     bookmarks: any[];
     lists: any[];
   };
@@ -17,8 +25,16 @@ const initialState: UserState = {
     firstname: null,
     lastname: null,
     email: null,
+    date: null,
     token: null,
-    preferences: {},
+    preferences: {
+      type: null,
+      dietetique: null,
+      bilan: null,
+      ethique: null,
+      local: null,
+      agriculture: null,
+    },
     bookmarks: [],
     lists: [],
   },
@@ -33,6 +49,11 @@ export const userSlice = createSlice({
       action: PayloadAction<UserState["value"]>
     ) => {
       state.value = action.payload;
+    },
+    logoutUser: (
+      state: UserState,
+    ) => {
+      state.value = initialState.value;
     },
     addList: (state, action: PayloadAction<any>) => {
       state.value.lists.push(action.payload);
@@ -63,6 +84,7 @@ export const userSlice = createSlice({
 
 export const {
   connectUser,
+  logoutUser,
   addList,
   changeListStatus,
   deleteList,

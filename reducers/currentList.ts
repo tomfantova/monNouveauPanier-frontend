@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export type UserState = {
+export type CurrentListState = {
   value: any;
 };
 
-const initialState: UserState = {
+const initialState: CurrentListState = {
   value: null,
 };
 
@@ -13,20 +13,20 @@ export const currentListSlice = createSlice({
   initialState,
   reducers: {
     addCurrentList: (
-      state: UserState,
-      action: PayloadAction<UserState["value"]["categories"]>
+      state: CurrentListState,
+      action: PayloadAction<CurrentListState["value"]["categories"]>
     ) => {
       state.value = action.payload;
     },
     addCategory: (state, action: PayloadAction<any>) => {
       state.value.categories.push(action.payload);
     },
-    removeCategory: (state: UserState, action: PayloadAction<string>) => {
+    removeCategory: (state: CurrentListState, action: PayloadAction<string>) => {
       state.value.categories = state.value.categories.filter(
         (catData: any) => catData.name !== action.payload
       );
     },
-    removeCurrentList: (state: UserState) => {
+    removeCurrentList: (state: CurrentListState) => {
       state.value = null;
     },
     addArticles: (state, action: PayloadAction<any>) => {

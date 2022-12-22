@@ -9,13 +9,14 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import user from "./reducers/user";
 import currentList from "./reducers/currentList";
 import executedList from "./reducers/executedList";
 import modifyList from "./reducers/modifyList";
 import allGuides from "./reducers/allGuides";
+import signUpProcess from './reducers/signUpProcess'
 
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
@@ -28,6 +29,7 @@ const reducers = combineReducers({
   executedList,
   modifyList,
   allGuides,
+  signUpProcess
 });
 
 const persistConfig = { key: "monnouveaupanier", storage: AsyncStorage };
@@ -45,6 +47,12 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import WelcomeScreen from "./screens/connection/WelcomeScreen";
+import ConnexionScreen from "./screens/connection/ConnectionScreen";
+import InscriptionScreen from "./screens/connection/InscriptionScreen";
+import TypeScreen from "./screens/connection/TypeScreen";
+import PreferenceScreen from "./screens/connection/PreferenceScreen";
+import ForgotPasswordScreen from './screens/connection/ForgotPasswordScreen';
+import ProfileScreen from './screens/profile/ProfileScreen';
 import GuidesScreen from "./screens/guides/GuidesScreen";
 import CategoryScreen from "./screens/guides/CategoryScreen";
 import ArticleScreen from "./screens/guides/ArticleScreen";
@@ -56,16 +64,17 @@ import ExecutedScreen from "./screens/lists/ExecutedScreen";
 import ArchiveScreen from "./screens/lists/ArchiveScreen";
 
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
-
-
+import { NativeBaseProvider } from "native-base";
 
 
 export default function App() {
+
   const { height, width, fontScale } = useWindowDimensions();
   const styles = makeStyles(height, width, fontScale);
 
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
+
 
   const HeaderContent = (props: any) => {
     let handleHeaderTitle: any = "";
@@ -211,6 +220,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
+      <NativeBaseProvider>
         <StatusBar style="light" />
         <NavigationContainer>
           <Stack.Navigator
@@ -219,9 +229,15 @@ export default function App() {
             }}
           >
             <Stack.Screen name="Bienvenue" component={WelcomeScreen} />
+            <Stack.Screen name="Connexion" component={ConnexionScreen} />
+            <Stack.Screen name="Preference" component={PreferenceScreen} />
+            <Stack.Screen name="Type" component={TypeScreen} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+            <Stack.Screen name="Inscription" component={InscriptionScreen} />
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
           </Stack.Navigator>
         </NavigationContainer>
+      </NativeBaseProvider>
       </PersistGate>
     </Provider>
   );

@@ -15,9 +15,11 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   addExecutedList,
   removeExecutedList,
+  ExecutedListState
 } from "../../reducers/executedList";
-import { addCurrentList, UserState } from "../../reducers/currentList";
-import { modifyFalse } from "../../reducers/modifyList";
+import {UserState} from '../../reducers/user'
+import { addCurrentList, CurrentListState } from "../../reducers/currentList";
+import { modifyFalse, ModifyListState } from "../../reducers/modifyList";
 
 export default function ListsScreen({ navigation }) {
   const { height, width, fontScale } = useWindowDimensions();
@@ -26,10 +28,10 @@ export default function ListsScreen({ navigation }) {
   const [newListName, setNewListName] = useState("");
   const user = useSelector((state: { user: UserState }) => state.user.value);
   const executedList = useSelector(
-    (state: { executedList: UserState }) => state.executedList.value
+    (state: { executedList: ExecutedListState }) => state.executedList.value
   );
   const modifyList = useSelector(
-    (state: { modifyList: UserState }) => state.modifyList.value
+    (state: { modifyList: ModifyListState }) => state.modifyList.value
   );
 
   // Ajouter une nouvelle liste au reducer currentList //

@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export type UserState = {
+export type ExecutedListState = {
   value: any;
 };
 
-const initialState: UserState = {
+const initialState: ExecutedListState = {
   value: null,
 };
 
@@ -13,12 +13,12 @@ export const executedListSlice = createSlice({
   initialState,
   reducers: {
     addExecutedList: (
-      state: UserState,
-      action: PayloadAction<UserState["value"]["categories"]>
+      state: ExecutedListState,
+      action: PayloadAction<ExecutedListState["value"]["categories"]>
     ) => {
       state.value = action.payload;
     },
-    removeExecutedList: (state: UserState) => {
+    removeExecutedList: (state: ExecutedListState) => {
       state.value = null;
     },
     changeArticleStatus: (state, action: PayloadAction<any>) => {
