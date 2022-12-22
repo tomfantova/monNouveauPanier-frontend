@@ -11,6 +11,7 @@ import {
   Image,
   Modal,
   TextInput,
+  ScrollView,
 } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -31,9 +32,11 @@ export default function SectionsScreen({ navigation }) {
   const styles = makeStyles(height, width, fontScale);
   const [modalCategoryVisible, setModalCategoryVisible] = useState(false);
   const [modalArticlesVisible, setmodalArticlesVisible] = useState(false);
+  const [modalGuideVisible, setmodalGuideVisible] = useState(false);
   const [modalQuitVisible, setModalQuitVisible] = useState(false);
   const [newCatName, setNewCatName] = useState("");
   const [catOpened, setCatOpened] = useState("");
+  const [guideOpened, setGuideOpened] = useState("");
   const dispatch = useDispatch();
   const currentList = useSelector(
     (state: { currentList: CurrentListState }) => state.currentList.value
@@ -149,11 +152,13 @@ export default function SectionsScreen({ navigation }) {
     //
     let articleToTest = refInputs.current[i];
     let iColor = "#c8c8c8";
+    let guide = "";
     guides.map((guidesData, i) => {
       let regexString = guidesData.title;
       let regex = new RegExp(regexString, "gi");
       if (regex.test(articleToTest)) {
         iColor = "#002654";
+        guide = guidesData;
       }
     });
     //
@@ -162,7 +167,10 @@ export default function SectionsScreen({ navigation }) {
     inputs.push(
       <View style={styles.articlesCard} key={i}>
         <View style={styles.info}>
-          <TouchableOpacity activeOpacity={0.8}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => handleOpenGuide(guide)}
+          >
             <FontAwesome name="info-circle" size={25} color={iColor} />
           </TouchableOpacity>
         </View>
@@ -197,6 +205,107 @@ export default function SectionsScreen({ navigation }) {
     refInputs.current = [""];
     setNumInputs(1);
     handleCloseModalArticles();
+  };
+
+  // // Si existant, affichage avec le "i" du guide correspondant dans une modale //
+
+  // // // Ouverture modale //
+
+  let currentArticle = {
+    title: "",
+    date: "",
+    tags: [""],
+    images: { main: "" },
+    resume: { subtitles: [""], paragraphs: [""] },
+    main: { subtitles: [""], paragraphs: [""] },
+  };
+  if (guideOpened) {
+    currentArticle = guides.filter((e) => e._id.toString() === guideOpened)[0];
+  }
+
+  const handleOpenGuide = (guide) => {
+    if (guide) {
+      setGuideOpened(guide._id);
+      setmodalGuideVisible(true);
+      setmodalArticlesVisible(false);
+    }
+  };
+
+  // // // Contenu du résumé //
+
+  const currentArticleResume = () => {
+    const resumeContent = [];
+    currentArticle.resume.subtitles.forEach((e, i) => {
+      let borderColor = {};
+      if (e === "Vertus") {
+        borderColor = { borderColor: "rgba(0, 122, 1, 0.6)" };
+      } else if (e === "Points d'attention") {
+        borderColor = { borderColor: "#FFC300" };
+      } else {
+        borderColor = { borderColor: "rgba(199, 0, 57, 0.5)" };
+      }
+      resumeContent.push(
+        <View style={[styles.resumeCard, borderColor]} key={i}>
+          <Text style={styles.titleText}>
+            {currentArticle.resume.subtitles[i]}
+          </Text>
+          <Text style={styles.regularText}>
+            {currentArticle.resume.paragraphs[i]}
+          </Text>
+        </View>
+      );
+    });
+    return resumeContent;
+  };
+
+  // // // Contenu du guide //
+
+  const currentArticleContent = () => {
+    const articleContent = [];
+    currentArticle.main.subtitles.forEach((e, i) => {
+      articleContent.push(
+        <View key={i + currentArticle.resume.subtitles.length}>
+          <Text style={styles.titleText}>
+            {currentArticle.main.subtitles[i]}
+          </Text>
+          <Text style={styles.contentText}>
+            {currentArticle.main.paragraphs[i]}
+          </Text>
+        </View>
+      );
+    });
+    return articleContent;
+  };
+
+  // // // Gestion des images du guide (require ne prend que les Strings en dur) //
+
+  let illustration = {};
+  if (currentArticle) {
+    const honey = require("../../assets/guides/news-honey.jpg");
+    switch (currentArticle.images.main) {
+      case "honey":
+        illustration = honey;
+        break;
+    }
+  }
+  // / // Affichage des tags du guide //
+
+  let tags = [];
+  if (currentArticle) {
+    tags = currentArticle.tags.map((tagsData, i) => {
+      return (
+        <View key={i} style={styles.tags}>
+          <Text style={styles.textTags}>#{tagsData}</Text>
+        </View>
+      );
+    });
+  }
+
+  // // // Fermeture modale //
+
+  const handleCloseGuide = () => {
+    setmodalArticlesVisible(true);
+    setmodalGuideVisible(false);
   };
 
   // Afficher les rayons de la liste en cours de création //
@@ -314,13 +423,19 @@ export default function SectionsScreen({ navigation }) {
       <Modal visible={modalCategoryVisible} animationType="fade" transparent>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <TouchableOpacity
-              style={styles.xModal}
-              onPress={() => handleCloseModalCategory()}
-              activeOpacity={0.8}
-            >
-              <FontAwesome name="close" color="#002654" size={20}></FontAwesome>
-            </TouchableOpacity>
+            <View style={styles.addHeader}>
+              <Text style={styles.addCatText}>Nouveau rayon</Text>
+              <TouchableOpacity
+                onPress={() => handleCloseModalCategory()}
+                activeOpacity={0.8}
+              >
+                <FontAwesome
+                  name="close"
+                  color="#002654"
+                  size={20}
+                ></FontAwesome>
+              </TouchableOpacity>
+            </View>
             <TextInput
               style={styles.input}
               placeholder="Nommez votre rayon"
@@ -338,7 +453,7 @@ export default function SectionsScreen({ navigation }) {
           </View>
         </View>
       </Modal>
-      <Modal visible={modalArticlesVisible} animationType="fade" transparent>
+      <Modal visible={modalArticlesVisible} transparent>
         <View style={styles.centeredView2}>
           <View style={styles.modalView2}>
             <Text style={styles.openedCat}>{catOpened}</Text>
@@ -384,6 +499,43 @@ export default function SectionsScreen({ navigation }) {
               activeOpacity={0.8}
             >
               <Text style={styles.textButton}>Quitter</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      <Modal visible={modalGuideVisible} transparent>
+        <View style={styles.centeredView2}>
+          <View style={styles.modalView2}>
+            <ScrollView
+              style={styles.categoryScrollViewContainer}
+              contentContainerStyle={styles.categoryScrollViewContent}
+            >
+              <View style={styles.titleCard}>
+                <Image
+                  source={illustration}
+                  defaultSource={illustration}
+                  style={styles.guidePicture}
+                />
+                <View>
+                  <Text style={styles.categoryGuideTitle}>
+                    {currentArticle.title}
+                  </Text>
+
+                  <Text style={styles.regularText}>
+                    Mis à jour en {currentArticle.date.slice(0, 4)}
+                  </Text>
+                  <View style={styles.allTags}>{tags}</View>
+                </View>
+              </View>
+              {currentArticleResume()}
+              <View style={styles.contentCard}>{currentArticleContent()}</View>
+            </ScrollView>
+            <TouchableOpacity
+              onPress={() => handleCloseGuide()}
+              style={styles.button}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.textButton}>Fermer</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -490,6 +642,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
     },
     sections: {
       margin: adaptToWidth(10),
+
       flexWrap: "wrap",
       flexDirection: "row",
       justifyContent: "center",
@@ -596,7 +749,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
     button: {
       width: adaptToWidth(150),
       alignItems: "center",
-      marginTop: adaptToWidth(20),
+      marginTop: adaptToWidth(10),
       paddingTop: adaptToWidth(8),
       backgroundColor: "#F1A100",
       borderRadius: adaptToWidth(8),
@@ -608,10 +761,6 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       height: adaptToWidth(24),
       fontWeight: "600",
       fontSize: normalizeText(15),
-    },
-    xModal: {
-      width: adaptToWidth(220),
-      alignItems: "flex-end",
     },
     openedCat: {
       fontSize: normalizeText(17),
@@ -660,6 +809,78 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
     info: {
       width: adaptToWidth(30),
       alignItems: "flex-end",
+    },
+    contentText: {
+      fontSize: normalizeText(15),
+      marginBottom: adaptToWidth(10),
+    },
+    resumeCard: {
+      marginTop: adaptToWidth(4),
+      marginBottom: adaptToWidth(4),
+      width: "100%",
+      borderRadius: adaptToWidth(8),
+      backgroundColor: "white",
+      padding: adaptToWidth(12),
+      borderWidth: adaptToWidth(2),
+    },
+    regularText: {
+      fontSize: normalizeText(15),
+    },
+    tags: {
+      flexDirection: "row",
+      backgroundColor: "rgba(123, 182, 215, 0.5)",
+      borderRadius: adaptToWidth(6),
+      marginTop: adaptToWidth(15),
+      marginRight: adaptToWidth(3),
+      padding: adaptToWidth(3),
+    },
+    textTags: { fontSize: normalizeText(12) },
+    categoryScrollViewContainer: {
+      paddingTop: adaptToWidth(10),
+    },
+    categoryScrollViewContent: {
+      justifyContent: "center",
+      alignItems: "center",
+      paddingBottom: adaptToWidth(10),
+    },
+    titleCard: {
+      flexDirection: "row",
+      marginBottom: adaptToWidth(16),
+      width: "100%",
+      borderRadius: adaptToWidth(8),
+      backgroundColor: "white",
+      padding: adaptToWidth(15),
+    },
+    categoryGuideTitle: {
+      fontWeight: "600",
+      fontSize: normalizeText(25),
+    },
+    allTags: {
+      flexDirection: "row",
+    },
+    contentCard: {
+      marginTop: adaptToWidth(16),
+      marginBottom: adaptToWidth(16),
+      width: "100%",
+      borderRadius: adaptToWidth(8),
+      backgroundColor: "white",
+      padding: adaptToWidth(12),
+    },
+    guidePicture: {
+      borderRadius: adaptToWidth(10),
+      width: adaptToWidth(100),
+      height: adaptToWidth(100),
+      marginRight: adaptToWidth(10),
+    },
+    addHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      width: adaptToWidth(220),
+    },
+    addCatText: {
+      marginLeft: adaptToWidth(20),
+      fontSize: normalizeText(18),
+      fontWeight: "bold",
     },
   });
 };

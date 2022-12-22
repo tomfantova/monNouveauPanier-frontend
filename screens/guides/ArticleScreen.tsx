@@ -100,10 +100,22 @@ export default function ArticleScreen({ navigation, route }) {
   const currentArticleResume = () => {
     const resumeContent = [];
     currentArticle.resume.subtitles.forEach((e, i) => {
+      let borderColor = {};
+      if (e === "Vertus") {
+        borderColor = { borderColor: "rgba(0, 122, 1, 0.6)" };
+      } else if (e === "Points d'attention") {
+        borderColor = { borderColor: "#FFC300" };
+      } else {
+        borderColor = { borderColor: "rgba(199, 0, 57, 0.5)" };
+      }
       resumeContent.push(
-        <View key={i}>
-          <Text>{currentArticle.resume.subtitles[i]}</Text>
-          <Text>{currentArticle.resume.paragraphs[i]}</Text>
+        <View style={[styles.resumeCard, borderColor]} key={i}>
+          <Text style={styles.titleText}>
+            {currentArticle.resume.subtitles[i]}
+          </Text>
+          <Text style={styles.regularText}>
+            {currentArticle.resume.paragraphs[i]}
+          </Text>
         </View>
       );
     });
@@ -116,8 +128,12 @@ export default function ArticleScreen({ navigation, route }) {
     currentArticle.main.subtitles.forEach((e, i) => {
       articleContent.push(
         <View key={i + currentArticle.resume.subtitles.length}>
-          <Text>{currentArticle.main.subtitles[i]}</Text>
-          <Text>{currentArticle.main.paragraphs[i]}</Text>
+          <Text style={styles.titleText}>
+            {currentArticle.main.subtitles[i]}
+          </Text>
+          <Text style={styles.contentText}>
+            {currentArticle.main.paragraphs[i]}
+          </Text>
         </View>
       );
     });
@@ -163,6 +179,27 @@ export default function ArticleScreen({ navigation, route }) {
     }
   };
 
+  // Gestion des images (require ne prend que les Strings en dur) //
+
+  const honey = require("../../assets/guides/news-honey.jpg");
+  let image = {};
+  switch (currentArticle.images.main) {
+    case "honey":
+      image = honey;
+      break;
+  }
+
+  // Affichage des tags //
+
+  let tags = [];
+  tags = currentArticle.tags.map((tagsData, i) => {
+    return (
+      <View key={i} style={styles.tags}>
+        <Text style={styles.textTags}>#{tagsData}</Text>
+      </View>
+    );
+  });
+
   // Return du screen //
 
   return (
@@ -199,12 +236,27 @@ export default function ArticleScreen({ navigation, route }) {
                 style={styles.categoryScrollViewContainer}
                 contentContainerStyle={styles.categoryScrollViewContent}
               >
-                <Text>{currentArticle.title}</Text>
-                <Text>{currentArticle.images.main}</Text>
-                <Text>{currentArticle.date}</Text>
-                <Text>{currentArticle.tags}</Text>
+                <View style={styles.titleCard}>
+                  <Image
+                    source={image}
+                    defaultSource={image}
+                    style={styles.picture}
+                  />
+                  <View>
+                    <Text style={styles.categoryGuideTitle}>
+                      {currentArticle.title}
+                    </Text>
+
+                    <Text style={styles.regularText}>
+                      Mis à jour en {currentArticle.date.slice(0, 4)}
+                    </Text>
+                    <View style={styles.allTags}>{tags}</View>
+                  </View>
+                </View>
                 {currentArticleResume()}
-                {currentArticleContent()}
+                <View style={styles.contentCard}>
+                  {currentArticleContent()}
+                </View>
               </ScrollView>
             </View>
           </View>
@@ -215,7 +267,7 @@ export default function ArticleScreen({ navigation, route }) {
 }
 
 const makeStyles = (height: number, width: number, fontScale: number) => {
-  const adaptToHeight = (size: number) => {
+  const adaptToHeigth = (size: number) => {
     return (height * size) / 844;
   };
 
@@ -249,8 +301,8 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       justifyContent: "flex-start",
       height: "100%",
       width: "100%",
-      paddingHorizontal: adaptToHeight(19.5),
-      paddingBottom: adaptToHeight(20),
+      paddingHorizontal: adaptToWidth(19.5),
+      paddingBottom: adaptToWidth(20),
     },
 
     categoryContainer: {
@@ -258,7 +310,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       alignItems: "center",
     },
     categoryTitleContainer: {
-      marginTop: adaptToHeight(6),
+      marginTop: adaptToWidth(6),
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
@@ -267,93 +319,153 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
     categoryBackIconContainer: {
       justifyContent: "center",
       alignItems: "center",
-      height: adaptToHeight(50),
-      width: adaptToHeight(50),
+      height: adaptToWidth(50),
+      width: adaptToWidth(50),
     },
     categoryBackIcon: {
-      fontSize: adaptToHeight(40), // Laisser adaptToHeight(), insensible au fontScale
+      fontSize: adaptToWidth(40), // Laisser adaptToWidth(), insensible au fontScale
     },
     categoryTitle: {
       fontWeight: "600",
       fontSize: normalizeText(20),
       textAlign: "center",
-      marginTop: adaptToHeight(24),
-      marginBottom: adaptToHeight(24),
+      marginTop: adaptToWidth(24),
+      marginBottom: adaptToWidth(24),
       width: width - adaptToWidth(140),
     },
     categoryEmptyContainer: {
       justifyContent: "center",
       alignItems: "center",
-      height: adaptToHeight(50),
-      width: adaptToHeight(50),
+      height: adaptToWidth(50),
+      width: adaptToWidth(50),
     },
     categoryScrollViewWrapper: {
-      borderTopWidth: adaptToHeight(1),
-      borderBottomWidth: adaptToHeight(1),
+      borderTopWidth: adaptToWidth(1),
+      borderBottomWidth: adaptToWidth(1),
       borderColor: "grey",
       height: "88%",
-      width: width - adaptToHeight(40),
+      width: width - adaptToWidth(40),
     },
     categoryScrollViewContainer: {
-      paddingTop: adaptToHeight(10),
+      paddingTop: adaptToWidth(10),
     },
     categoryScrollViewContent: {
       justifyContent: "center",
       alignItems: "center",
-      paddingBottom: adaptToHeight(10),
+      paddingBottom: adaptToWidth(10),
     },
     categoryCard: {
       justifyContent: "space-between",
       alignItems: "center",
       flexDirection: "row",
-      height: adaptToHeight(80),
-      width: width - adaptToHeight(80),
-      marginBottom: adaptToHeight(10),
+      height: adaptToWidth(80),
+      width: width - adaptToWidth(80),
+      marginBottom: adaptToWidth(10),
       backgroundColor: "#F2F2F2",
-      borderRadius: adaptToHeight(6),
+      borderRadius: adaptToWidth(6),
     },
     categoryCardMain: {
       flexDirection: "row",
       justifyContent: "flex-start",
       alignItems: "center",
-      borderTopWidth: adaptToHeight(0.5),
-      borderBottomWidth: adaptToHeight(0.5),
-      borderLeftWidth: adaptToHeight(0.5),
-      borderTopLeftRadius: adaptToHeight(6),
-      borderBottomLeftRadius: adaptToHeight(6),
+      borderTopWidth: adaptToWidth(0.5),
+      borderBottomWidth: adaptToWidth(0.5),
+      borderLeftWidth: adaptToWidth(0.5),
+      borderTopLeftRadius: adaptToWidth(6),
+      borderBottomLeftRadius: adaptToWidth(6),
       borderColor: "grey",
       height: "100%",
-      width: width - adaptToHeight(110),
-      paddingLeft: adaptToHeight(10),
+      width: width - adaptToWidth(110),
+      paddingLeft: adaptToWidth(10),
     },
     categoryCardImage: {
-      borderRadius: adaptToHeight(6),
-      borderWidth: adaptToHeight(0.5),
+      borderRadius: adaptToWidth(6),
+      borderWidth: adaptToWidth(0.5),
       borderColor: "grey",
-      width: adaptToHeight(60),
-      height: adaptToHeight(60),
+      width: adaptToWidth(60),
+      height: adaptToWidth(60),
       backgroundColor: "blue",
     },
     categoryCardTitle: {
       fontWeight: "600",
       fontSize: normalizeText(15),
-      marginLeft: adaptToHeight(10),
-      width: adaptToHeight(190),
+      marginLeft: adaptToWidth(10),
+      width: adaptToWidth(190),
     },
     categoryCardCategoryContainer: {
       height: "100%",
-      width: adaptToHeight(30),
+      width: adaptToWidth(30),
       justifyContent: "center",
       alignItems: "center",
       borderColor: "grey",
-      borderWidth: adaptToHeight(0.5),
-      borderBottomRightRadius: adaptToHeight(6),
-      borderTopRightRadius: adaptToHeight(6),
+      borderWidth: adaptToWidth(0.5),
+      borderBottomRightRadius: adaptToWidth(6),
+      borderTopRightRadius: adaptToWidth(6),
     },
     categoryCardCategory: {
       fontWeight: "500",
       fontSize: normalizeText(15),
       color: "white",
+    },
+    picture: {
+      borderRadius: adaptToWidth(10),
+      width: adaptToWidth(100),
+      height: adaptToWidth(100),
+      marginRight: adaptToWidth(10),
+    },
+    categoryGuideTitle: {
+      fontWeight: "600",
+      fontSize: normalizeText(25),
+    },
+    regularText: {
+      fontSize: normalizeText(15),
+    },
+    allTags: {
+      flexDirection: "row",
+    },
+    tags: {
+      flexDirection: "row",
+      backgroundColor: "rgba(123, 182, 215, 0.5)",
+      borderRadius: adaptToWidth(6),
+      marginTop: adaptToWidth(15),
+      marginRight: adaptToWidth(3),
+      padding: adaptToWidth(3),
+    },
+    textTags: { fontSize: normalizeText(12) },
+    titleCard: {
+      flexDirection: "row",
+      marginTop: adaptToWidth(16),
+      marginBottom: adaptToWidth(16),
+      width: "100%",
+      borderRadius: adaptToWidth(8),
+      backgroundColor: "white",
+      padding: adaptToWidth(15),
+    },
+    resumeCard: {
+      marginTop: adaptToWidth(4),
+      marginBottom: adaptToWidth(4),
+      width: "100%",
+      borderRadius: adaptToWidth(8),
+      backgroundColor: "white",
+      padding: adaptToWidth(12),
+      borderWidth: adaptToWidth(2),
+    },
+    titleText: {
+      fontWeight: "600",
+      fontSize: normalizeText(16),
+      marginBottom: adaptToWidth(8),
+    },
+    contentCard: {
+      marginTop: adaptToWidth(16),
+      marginBottom: adaptToWidth(16),
+      width: "100%",
+      borderRadius: adaptToWidth(8),
+      backgroundColor: "white",
+      padding: adaptToWidth(12),
+    },
+    contentText: {
+      fontSize: normalizeText(15),
+      marginBottom: adaptToWidth(10),
     },
   });
 };
