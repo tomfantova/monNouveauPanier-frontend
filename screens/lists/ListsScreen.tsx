@@ -84,7 +84,7 @@ export default function ListsScreen({ navigation }) {
   if (!user.lists.length || user.lists.every((e) => !e.active)) {
     actives = (
       <View>
-        <Text style={styles.noList}>Vous n'avez pas encore de listes</Text>
+        <Text style={styles.noList}>Vous n'avez pas encore de listes.</Text>
       </View>
     );
   } else {
@@ -111,7 +111,7 @@ export default function ListsScreen({ navigation }) {
   if (!user.lists.length || user.lists.every((e) => e.active)) {
     inactives = (
       <View>
-        <Text style={styles.noList}>Vous n'avez pas archivé de listes</Text>
+        <Text style={styles.noList}>Vous n'avez pas archivé de listes.</Text>
       </View>
     );
   } else {
@@ -229,7 +229,8 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       paddingVertical: adaptToWidth(20),
     },
     addList: {
-      marginVertical: adaptToWidth(20),
+      marginTop: adaptToWidth(20),
+      marginBottom: adaptToWidth(30),
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
@@ -240,7 +241,8 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       width: "80%",
       backgroundColor: "#ffffff",
       fontSize: normalizeText(16),
-      padding: adaptToWidth(20),
+      paddingVertical: adaptToWidth(14),
+      paddingHorizontal: adaptToWidth(20),
       marginRight: adaptToWidth(20),
       textAlign: "left",
       borderColor: "black",
@@ -256,7 +258,8 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
     listsText: {
       marginTop: adaptToWidth(5),
       alignSelf: "flex-start",
-      fontSize: normalizeText(18),
+      fontSize: normalizeText(16),
+      fontWeight: '600',
     },
     lists: {
       marginTop: adaptToWidth(5),
@@ -290,7 +293,9 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       paddingBottom: adaptToWidth(5),
     },
     regularText: {
-      fontSize: normalizeText(18),
+      fontSize: normalizeText(17),
+      fontWeight: '600',
+      marginVertical: adaptToWidth(8),
     },
     noList: {
       marginVertical: adaptToWidth(20),

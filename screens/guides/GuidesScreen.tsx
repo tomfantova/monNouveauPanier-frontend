@@ -19,9 +19,9 @@ export default function GuidesScreen({ navigation }) {
 
     const dispatch = useDispatch()
     const allGuides = useSelector((state: { allGuides: AllGuidesState }) => state.allGuides.value)
-    const user = useSelector((state: { user: UserState }) => state.user.value);
+    // const user = useSelector((state: { user: UserState }) => state.user.value);
 
-    console.log(user)
+    // console.log(user)
 
     const globalScrollRef = useRef<any>()
     const [globalScrollEnabled, setGlobalScrollEnabled] = useState(true)

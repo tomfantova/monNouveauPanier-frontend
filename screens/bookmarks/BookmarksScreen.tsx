@@ -145,8 +145,9 @@ export default function BookmarksScreen({ navigation, route }) {
               </Text>
               <MaterialCommunityIcon
                 name="star"
-                color="#002654"
+                color="rgb(241, 161, 0)"
                 size={30}
+                style={styles.icon}
               ></MaterialCommunityIcon>
             </View>
           </View>
@@ -194,26 +195,30 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
     },
     offersText: {
       fontWeight: "600",
-      marginTop: adaptToWidth(290),
+      marginTop: adaptToWidth(294),
       fontSize: normalizeText(20),
     },
     header: {
       backgroundColor: "white",
       flexDirection: "row",
-      justifyContent: "space-around",
+      justifyContent: "space-between",
       width: "100%",
       height: adaptToHeight(60),
     },
     searchInput: {
       fontSize: normalizeText(15),
-      width: "60%",
+      width: "70%",
       textAlign: "left",
       padding: adaptToWidth(14),
       borderColor: "black",
       borderWidth: adaptToWidth(0.5),
       borderRadius: adaptToWidth(8),
       margin: adaptToWidth(10),
+      marginLeft: adaptToWidth(50),
       backgroundColor: "white",
+    },
+    icon: {
+      marginRight: adaptToWidth(45),
     },
     cart: {
       flexDirection: "row",
@@ -224,7 +229,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
     },
     cartText: {
       fontSize: normalizeText(20),
-      marginRight: adaptToWidth(7),
+      marginRight: adaptToWidth(5.8),
     },
     button: {
       marginVertical: adaptToWidth(5),

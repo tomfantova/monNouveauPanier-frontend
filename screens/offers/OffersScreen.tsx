@@ -41,7 +41,8 @@ export default function OffersScreen({ navigation }) {
             <FontAwesome
               name="shopping-basket"
               color="#002654"
-              size={25}
+              size={22}
+              style={styles.icon}
             ></FontAwesome>
           </View>
         </View>
@@ -100,6 +101,10 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       paddingHorizontal: adaptToWidth(20),
       paddingVertical: adaptToWidth(20),
     },
+    icon: {
+      marginRight: adaptToWidth(26),
+      marginLeft: adaptToWidth(2.5),
+    },
     imageBack: { flex: 1, justifyContent: "center" },
     offersText: {
       fontWeight: "600",
@@ -114,13 +119,14 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
     },
     searchInput: {
       fontSize: normalizeText(15),
-      width: "60%",
+      width: "70%",
       textAlign: "left",
       padding: adaptToWidth(14),
       borderColor: "black",
       borderWidth: adaptToWidth(0.5),
       borderRadius: adaptToWidth(8),
       margin: adaptToWidth(10),
+      marginLeft: adaptToWidth(30),
       backgroundColor: "white",
     },
     cart: {

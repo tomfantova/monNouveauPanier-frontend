@@ -149,8 +149,10 @@ export default function ArticleScreen({ navigation, route }) {
   // // Changement de l'icone //
 
   let starIcon = "star-outline";
+  let starColor = 'black'
   if (user.bookmarks.includes(articleToBook)) {
     starIcon = "star";
+    starColor = "rgb(241, 161, 0)"
   }
 
   // // Fonction update //
@@ -226,6 +228,7 @@ export default function ArticleScreen({ navigation, route }) {
               >
                 <MaterialCommunityIcon
                   name={starIcon}
+                  color={starColor}
                   style={styles.categoryBackIcon}
                 />
               </TouchableOpacity>
