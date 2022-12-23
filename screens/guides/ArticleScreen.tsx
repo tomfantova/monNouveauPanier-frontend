@@ -36,39 +36,39 @@ export default function ArticleScreen({ navigation, route }) {
   )[0];
 
   const [globalImages, setGlobalImages] = useState({
-    balsalmicVinegar: require('../../assets/products/balsamic-vinegar.jpg'),
-    beef: require('../../assets/products/beef.jpg'),
-    biscuits: require('../../assets/products/biscuits.jpg'),
-    bread: require('../../assets/products/bread.jpg'),
-    butter: require('../../assets/products/butter.jpg'),
-    cereals: require('../../assets/products/cereals.jpg'),
-    charcuterie: require('../../assets/products/charcuterie.jpg'),
-    chicken: require('../../assets/products/chicken.jpg'),
-    eggs: require('../../assets/products/eggs.jpg'),
-    exoticFruits: require('../../assets/products/exotic-fruits.jpg'),
-    fish: require('../../assets/products/fish.jpg'),
-    fromages: require('../../assets/products/fromages.jpg'),
-    fruitJuices: require('../../assets/products/fruit-juices.jpg'),
-    fruits: require('../../assets/products/fruits.jpg'),
-    honey: require('../../assets/products/honey.jpg'),
-    milk: require('../../assets/products/milk.jpg'),
-    mustard: require('../../assets/products/mustard.jpg'),
-    oliveOil: require('../../assets/products/olive-oil.jpg'),
-    pasta: require('../../assets/products/pasta.jpg'),
-    pastries: require('../../assets/products/pastries.jpg'),
-    readyMeals: require('../../assets/products/ready-meals.jpg'),
-    rice: require('../../assets/products/rice.jpg'),
-    salt: require('../../assets/products/salt.jpg'),
-    spices: require('../../assets/products/spices.jpg'),
-    spirits: require('../../assets/products/spirits.jpg'),
-    terrines: require('../../assets/products/terrines.jpg'),
-    vegetables: require('../../assets/products/vegetables.jpg'),
-    vegetalOils: require('../../assets/products/vegetal-oils.jpg'),
-    viennoiseries: require('../../assets/products/viennoiseries.jpg'),
-    vinegar: require('../../assets/products/vinegar.jpg'),
-    wines: require('../../assets/products/wines.jpg'),
-    yogourts: require('../../assets/products/yogourts.jpg'),
-  })
+    balsalmicVinegar: require("../../assets/products/balsamic-vinegar.jpg"),
+    beef: require("../../assets/products/beef.jpg"),
+    biscuits: require("../../assets/products/biscuits.jpg"),
+    bread: require("../../assets/products/bread.jpg"),
+    butter: require("../../assets/products/butter.jpg"),
+    cereals: require("../../assets/products/cereals.jpg"),
+    charcuterie: require("../../assets/products/charcuterie.jpg"),
+    chicken: require("../../assets/products/chicken.jpg"),
+    eggs: require("../../assets/products/eggs.jpg"),
+    exoticFruits: require("../../assets/products/exotic-fruits.jpg"),
+    fish: require("../../assets/products/fish.jpg"),
+    fromages: require("../../assets/products/fromages.jpg"),
+    fruitJuices: require("../../assets/products/fruit-juices.jpg"),
+    fruits: require("../../assets/products/fruits.jpg"),
+    honey: require("../../assets/products/honey.jpg"),
+    milk: require("../../assets/products/milk.jpg"),
+    mustard: require("../../assets/products/mustard.jpg"),
+    oliveOil: require("../../assets/products/olive-oil.jpg"),
+    pasta: require("../../assets/products/pasta.jpg"),
+    pastries: require("../../assets/products/pastries.jpg"),
+    readyMeals: require("../../assets/products/ready-meals.jpg"),
+    rice: require("../../assets/products/rice.jpg"),
+    salt: require("../../assets/products/salt.jpg"),
+    spices: require("../../assets/products/spices.jpg"),
+    spirits: require("../../assets/products/spirits.jpg"),
+    terrines: require("../../assets/products/terrines.jpg"),
+    vegetables: require("../../assets/products/vegetables.jpg"),
+    vegetalOils: require("../../assets/products/vegetal-oils.jpg"),
+    viennoiseries: require("../../assets/products/viennoiseries.jpg"),
+    vinegar: require("../../assets/products/vinegar.jpg"),
+    wines: require("../../assets/products/wines.jpg"),
+    yogourts: require("../../assets/products/yogourts.jpg"),
+  });
 
   let categoryName: string = "Nos guides conso";
   let categoryLetter: string = "?";
@@ -149,35 +149,39 @@ export default function ArticleScreen({ navigation, route }) {
   // // Changement de l'icone //
 
   let starIcon = "star-outline";
-  let starColor = 'black'
-  if (user.bookmarks.includes(articleToBook)) {
-    starIcon = "star";
-    starColor = "rgb(241, 161, 0)"
+  let starColor = "black";
+  if (!user.bookmarks.length) {
+    if (user.bookmarks.includes(articleToBook)) {
+      starIcon = "star";
+      starColor = "rgb(241, 161, 0)";
+    }
   }
 
   // // Fonction update //
 
   const handleUpdateBookmark = (product) => {
-    if (user.bookmarks.includes(articleToBook)) {
-      fetch(`${REACT_APP_BACKEND_URL}/bookmarks/delete`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token: user.token,
-          id: product,
-        }),
-      }).then((response) => response.json());
-      dispatch(deleteBookmark(product));
-    } else {
-      fetch(`${REACT_APP_BACKEND_URL}/bookmarks/add`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token: user.token,
-          id: product,
-        }),
-      }).then((response) => response.json());
-      dispatch(addBookmark(product));
+    if (!user.bookmarks.length) {
+      if (user.bookmarks.includes(articleToBook)) {
+        fetch(`${REACT_APP_BACKEND_URL}/bookmarks/delete`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            token: user.token,
+            id: product,
+          }),
+        }).then((response) => response.json());
+        dispatch(deleteBookmark(product));
+      } else {
+        fetch(`${REACT_APP_BACKEND_URL}/bookmarks/add`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            token: user.token,
+            id: product,
+          }),
+        }).then((response) => response.json());
+        dispatch(addBookmark(product));
+      }
     }
   };
 
