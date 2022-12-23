@@ -150,7 +150,8 @@ export default function ArticleScreen({ navigation, route }) {
 
   let starIcon = "star-outline";
   let starColor = "black";
-  if (!user.bookmarks.length) {
+  if (user.bookmarks.length >= 0) {
+    console.log('test true')
     if (user.bookmarks.includes(articleToBook)) {
       starIcon = "star";
       starColor = "rgb(241, 161, 0)";
@@ -160,7 +161,7 @@ export default function ArticleScreen({ navigation, route }) {
   // // Fonction update //
 
   const handleUpdateBookmark = (product) => {
-    if (!user.bookmarks.length) {
+    if (user.bookmarks.length >= 0) {
       if (user.bookmarks.includes(articleToBook)) {
         fetch(`${REACT_APP_BACKEND_URL}/bookmarks/delete`, {
           method: "PUT",

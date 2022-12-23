@@ -55,7 +55,7 @@ export default function BookmarksScreen({ navigation, route }) {
 
   // // Ecran si pas de favoris //
   //
-  if (!user.bookmarks.length) {
+  if (user.bookmarks.length === 0) {
     bookmarks = (
       <Text style={styles.offersText}>Vous n'avez pas encore de favoris !</Text>
     );
