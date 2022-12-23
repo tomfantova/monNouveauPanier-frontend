@@ -101,7 +101,7 @@ export default function ArticleScreen({ navigation, route }) {
     const resumeContent = [];
     currentArticle.resume.subtitles.forEach((e, i) => {
       let borderColor = {};
-      if (e === "Vertus") {
+      if (e === "Éco-responsable") {
         borderColor = { borderColor: "rgba(0, 122, 1, 0.6)" };
       } else if (e === "Points d'attention") {
         borderColor = { borderColor: "#FFC300" };
@@ -110,7 +110,7 @@ export default function ArticleScreen({ navigation, route }) {
       }
       resumeContent.push(
         <View style={[styles.resumeCard, borderColor]} key={i}>
-          <Text style={styles.titleText}>
+          <Text style={styles.titleResume}>
             {currentArticle.resume.subtitles[i]}
           </Text>
           <Text style={styles.regularText}>
@@ -453,10 +453,15 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       padding: adaptToWidth(12),
       borderWidth: adaptToWidth(2),
     },
-    titleText: {
+    titleResume: {
       fontWeight: "600",
       fontSize: normalizeText(16),
       marginBottom: adaptToWidth(8),
+    },
+    titleText: {
+      fontWeight: "600",
+      fontSize: normalizeText(16),
+      marginBottom: adaptToWidth(20),
     },
     contentCard: {
       marginTop: adaptToWidth(16),
@@ -468,7 +473,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
     },
     contentText: {
       fontSize: normalizeText(15),
-      marginBottom: adaptToWidth(10),
+      marginBottom: adaptToWidth(20),
     },
   });
 };
