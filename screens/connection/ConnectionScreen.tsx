@@ -72,66 +72,68 @@ export default function ConnexionScreen({ navigation }) {
                   ou Google
                 </Heading>
 
-            <VStack space={3} mt="12">
-              <FormControl>
-                <FormControl.Label>Email</FormControl.Label>
-                <Input
-                  value={userInfos.email}
-                  onChangeText={(text) =>
-                    setUserInfos({ ...userInfos, email: text })
-                  }
-                />
-              </FormControl>
-              <FormControl>
-                <FormControl.Label>Mot de Passe</FormControl.Label>
-                <Input
-                  type="password"
-                  value={userInfos.password}
-                  onChangeText={(text) =>
-                    setUserInfos({ ...userInfos, password: text })
-                  }
-                />
-              </FormControl>
-              <Text
-                underline
-                color="#EEA734"
-                onPress={() => navigation.navigate("Profile")}
-              >
-                Mot de passe oublié ?
-              </Text>
-              <Button
-                mt="2"
-                colorScheme="yellow"
-                onPress={() => handleConnect()}
-              >
-                CONNEXION
-              </Button>
-              <HStack mt="6" justifyContent="center">
-                <Text
-                  fontSize="sm"
-                  color="coolGray.600"
-                  _dark={{
-                    color: "warmGray.200",
-                  }}
-                >
-                  Pas encore de compte ?{" "}
-                </Text>
-                <Text
-                  marginBottom="50"
-                  underline
-                  color="#EEA734"
-                  onPress={() => navigation.navigate("Inscription")}
-                >
-                  Créer un compte
-                </Text>
-              </HStack>
-            </VStack>
-          </Box>
-        </Center>
+                <VStack space={3} mt="12">
+                  <FormControl>
+                    <FormControl.Label>Email</FormControl.Label>
+                    <Input
+                      autoCapitalize="none"
+                      value={userInfos.email}
+                      onChangeText={(text) =>
+                        setUserInfos({ ...userInfos, email: text })
+                      }
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormControl.Label>Mot de Passe</FormControl.Label>
+                    <Input
+                      autoCapitalize="none"
+                      type="password"
+                      value={userInfos.password}
+                      onChangeText={(text) =>
+                        setUserInfos({ ...userInfos, password: text })
+                      }
+                    />
+                  </FormControl>
+                  <Text
+                    underline
+                    color="#EEA734"
+                    onPress={() => navigation.navigate("Profile")}
+                  >
+                    Mot de passe oublié ?
+                  </Text>
+                  <Button
+                    mt="2"
+                    colorScheme="yellow"
+                    onPress={() => handleConnect()}
+                  >
+                    CONNEXION
+                  </Button>
+                  <HStack mt="6" justifyContent="center">
+                    <Text
+                      fontSize="sm"
+                      color="coolGray.600"
+                      _dark={{
+                        color: "warmGray.200",
+                      }}
+                    >
+                      Pas encore de compte ?{" "}
+                    </Text>
+                    <Text
+                      marginBottom="50"
+                      underline
+                      color="#EEA734"
+                      onPress={() => navigation.navigate("Inscription")}
+                    >
+                      Créer un compte
+                    </Text>
+                  </HStack>
+                </VStack>
+              </Box>
+            </Center>
+          </View>
+        </SafeAreaView>
       </View>
-    </SafeAreaView>
-  </View>
-</KeyboardAwareScrollView>
+    </KeyboardAwareScrollView>
   );
 }
 
