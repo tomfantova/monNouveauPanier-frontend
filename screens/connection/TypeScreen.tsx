@@ -23,7 +23,7 @@ import signUpProcess, {
   UserState,
   reset,
 } from "../../reducers/signUpProcess";
-import { connectUser } from '../../reducers/user'
+import { connectUser } from "../../reducers/user";
 
 // Start ListItem from React Native Elements https://reactnativeelements.com/docs/components/listitem
 // Start Rating from "react-native-ratings" https://github.com/Monte9/react-native-ratings
@@ -31,7 +31,6 @@ import { connectUser } from '../../reducers/user'
 // End ListItem from React Native Elements https://reactnativeelements.com/docs/components/listitem
 
 export default function TypeScreen({ navigation }) {
-
   const { height, width, fontScale } = useWindowDimensions();
   const styles = makeStyles(height, width, fontScale);
 
@@ -44,27 +43,25 @@ export default function TypeScreen({ navigation }) {
   const [local, setLocal] = useState(0);
   const [agriculture, setAgriculture] = useState(0);
 
-  const [goFetch, setGoFetch] = useState(false)
+  const [goFetch, setGoFetch] = useState(false);
 
   useEffect(() => {
-
     if (goFetch) {
-        fetch(`${REACT_APP_BACKEND_URL}/users/new`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(signUpProcess),
-          })
-            .then((response) => response.json())
-            .then((userData) => {
-                console.log(userData.newUser)
-              setGoFetch(false)
-              dispatch(connectUser(userData.newUser))
-              dispatch(reset())
-              navigation.navigate('TabNavigator')
-            });
+      fetch(`${REACT_APP_BACKEND_URL}/users/new`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(signUpProcess),
+      })
+        .then((response) => response.json())
+        .then((userData) => {
+          console.log(userData.newUser);
+          setGoFetch(false);
+          dispatch(connectUser(userData.newUser));
+          dispatch(reset());
+          navigation.navigate("TabNavigator");
+        });
     }
-
-  }, [goFetch])
+  }, [goFetch]);
 
   const types = {
     dietetique: dietetique,
@@ -72,7 +69,7 @@ export default function TypeScreen({ navigation }) {
     ethique: ethique,
     local: local,
     agriculture: agriculture,
-  }
+  };
 
   console.log("types", types);
 
@@ -80,9 +77,8 @@ export default function TypeScreen({ navigation }) {
 
   const handleSubmit = () => {
     dispatch(addUserType(types));
-    setGoFetch(true)
+    setGoFetch(true);
   };
-
 
   return (
     <KeyboardAwareScrollView>
@@ -115,138 +111,138 @@ export default function TypeScreen({ navigation }) {
                 </Heading>
               </VStack>
 
-          <ListItem bottomDivider>
-            <ListItem.Content>
-              <ListItem.Title>DIETETIQUE</ListItem.Title>
-              <ListItem.Subtitle>
-                Maîtriser sa consommation calorique
-              </ListItem.Subtitle>
-            </ListItem.Content>
-            <Rating
-              fractions={0}
-              imageSize={20}
-              minValue={0}
-              // onFinishRating={() => console.log("onFinishRating()")}
-              onFinishRating={setDietetique}
-            //   onStartRating={() => console.log("onStartRating()")}
-              ratingBackgroundColor="#FFF"
-              ratingColor="#FF0"
-              ratingCount={5}
-              ratingImage="star"
-              ratingTextColor="#222"
-              // showRating
-              startingValue={1}
-              style={{}}
-              type="star"
-            />
-          </ListItem>
-          <ListItem bottomDivider>
-            <ListItem.Content>
-              <ListItem.Title>BILAN CO2</ListItem.Title>
-              <ListItem.Subtitle>Protéger la planète</ListItem.Subtitle>
-            </ListItem.Content>
-            <Rating
-              fractions={0}
-              imageSize={20}
-              minValue={0}
-              onFinishRating={setbilan}
-            //   onStartRating={() => console.log("onStartRating()")}
-              ratingBackgroundColor="#FFF"
-              ratingColor="#FF0"
-              ratingCount={5}
-              ratingImage="star"
-              ratingTextColor="#222"
-              //        showRating
-              startingValue={1}
-              style={{}}
-              type="star"
-            />
-          </ListItem>
-          <ListItem bottomDivider>
-            <ListItem.Content>
-              <ListItem.Title>ETHIQUE ANIMALE</ListItem.Title>
-              <ListItem.Subtitle>
-                Eviter la souffrance animale
-              </ListItem.Subtitle>
-            </ListItem.Content>
-            <Rating
-              fractions={0}
-              imageSize={20}
-              minValue={0}
-              onFinishRating={setEthique}
-            //   onStartRating={() => console.log("onStartRating()")}
-              ratingBackgroundColor="#FFF"
-              ratingColor="#FF0"
-              ratingCount={5}
-              ratingImage="star"
-              ratingTextColor="#222"
-              //          showRating
-              startingValue={1}
-              style={{}}
-              type="star"
-            />
-          </ListItem>
-          <ListItem bottomDivider>
-            <ListItem.Content>
-              <ListItem.Title>PRODUITS LOCAUX</ListItem.Title>
-              <ListItem.Subtitle>
-                Soutenir l’économie locale
-              </ListItem.Subtitle>
-            </ListItem.Content>
-            <Rating
-              fractions={0}
-              imageSize={20}
-              minValue={0}
-              onFinishRating={setLocal}
-            //   onStartRating={() => console.log("onStartRating()")}
-              ratingBackgroundColor="#FFF"
-              ratingColor="#FF0"
-              ratingCount={5}
-              ratingImage="star"
-              ratingTextColor="#222"
-              //          showRating
-              startingValue={1}
-              style={{}}
-              type="star"
-            />
-          </ListItem>
-          <ListItem bottomDivider>
-            <ListItem.Content>
-              <ListItem.Title>AGRICULTURE RAISONNEE</ListItem.Title>
-              <ListItem.Subtitle>
-                Limiter usage de pesticides
-              </ListItem.Subtitle>
-            </ListItem.Content>
-            <Rating
-              fractions={0}
-              imageSize={20}
-              minValue={0}
-              onFinishRating={setAgriculture}
-            //   onStartRating={() => console.log("onStartRating()")}
-              ratingBackgroundColor="#FFF"
-              ratingColor="#FF0"
-              ratingCount={5}
-              ratingImage="star"
-              ratingTextColor="#222"
-              //          showRating
-              startingValue={1}
-              style={{}}
-              type="star"
-            />
-          </ListItem>
-          <Button
-            mt="5"
-            marginBottom="25"
-            colorScheme="yellow"
-            onPress={() => handleSubmit()}
-          >
-            VALIDER
-          </Button>
-        </View>
+              <ListItem bottomDivider>
+                <ListItem.Content>
+                  <ListItem.Title>DIETETIQUE</ListItem.Title>
+                  <ListItem.Subtitle>
+                    Maîtriser sa consommation calorique
+                  </ListItem.Subtitle>
+                </ListItem.Content>
+                <Rating
+                  fractions={0}
+                  imageSize={20}
+                  minValue={0}
+                  // onFinishRating={() => console.log("onFinishRating()")}
+                  onFinishRating={setDietetique}
+                  //   onStartRating={() => console.log("onStartRating()")}
+                  ratingBackgroundColor="#FFF"
+                  ratingColor="#FF0"
+                  ratingCount={5}
+                  ratingImage="star"
+                  ratingTextColor="#222"
+                  // showRating
+                  startingValue={1}
+                  style={{}}
+                  type="star"
+                />
+              </ListItem>
+              <ListItem bottomDivider>
+                <ListItem.Content>
+                  <ListItem.Title>BILAN CO2</ListItem.Title>
+                  <ListItem.Subtitle>Protéger la planète</ListItem.Subtitle>
+                </ListItem.Content>
+                <Rating
+                  fractions={0}
+                  imageSize={20}
+                  minValue={0}
+                  onFinishRating={setbilan}
+                  //   onStartRating={() => console.log("onStartRating()")}
+                  ratingBackgroundColor="#FFF"
+                  ratingColor="#FF0"
+                  ratingCount={5}
+                  ratingImage="star"
+                  ratingTextColor="#222"
+                  //        showRating
+                  startingValue={1}
+                  style={{}}
+                  type="star"
+                />
+              </ListItem>
+              <ListItem bottomDivider>
+                <ListItem.Content>
+                  <ListItem.Title>ETHIQUE ANIMALE</ListItem.Title>
+                  <ListItem.Subtitle>
+                    Eviter la souffrance animale
+                  </ListItem.Subtitle>
+                </ListItem.Content>
+                <Rating
+                  fractions={0}
+                  imageSize={20}
+                  minValue={0}
+                  onFinishRating={setEthique}
+                  //   onStartRating={() => console.log("onStartRating()")}
+                  ratingBackgroundColor="#FFF"
+                  ratingColor="#FF0"
+                  ratingCount={5}
+                  ratingImage="star"
+                  ratingTextColor="#222"
+                  //          showRating
+                  startingValue={1}
+                  style={{}}
+                  type="star"
+                />
+              </ListItem>
+              <ListItem bottomDivider>
+                <ListItem.Content>
+                  <ListItem.Title>PRODUITS LOCAUX</ListItem.Title>
+                  <ListItem.Subtitle>
+                    Soutenir l’économie locale
+                  </ListItem.Subtitle>
+                </ListItem.Content>
+                <Rating
+                  fractions={0}
+                  imageSize={20}
+                  minValue={0}
+                  onFinishRating={setLocal}
+                  //   onStartRating={() => console.log("onStartRating()")}
+                  ratingBackgroundColor="#FFF"
+                  ratingColor="#FF0"
+                  ratingCount={5}
+                  ratingImage="star"
+                  ratingTextColor="#222"
+                  //          showRating
+                  startingValue={1}
+                  style={{}}
+                  type="star"
+                />
+              </ListItem>
+              <ListItem bottomDivider>
+                <ListItem.Content>
+                  <ListItem.Title>AGRICULTURE RAISONNEE</ListItem.Title>
+                  <ListItem.Subtitle>
+                    Limiter usage de pesticides
+                  </ListItem.Subtitle>
+                </ListItem.Content>
+                <Rating
+                  fractions={0}
+                  imageSize={20}
+                  minValue={0}
+                  onFinishRating={setAgriculture}
+                  //   onStartRating={() => console.log("onStartRating()")}
+                  ratingBackgroundColor="#FFF"
+                  ratingColor="#FF0"
+                  ratingCount={5}
+                  ratingImage="star"
+                  ratingTextColor="#222"
+                  //          showRating
+                  startingValue={1}
+                  style={{}}
+                  type="star"
+                />
+              </ListItem>
+              <Button
+                mt="5"
+                marginBottom="25"
+                colorScheme="yellow"
+                onPress={() => handleSubmit()}
+              >
+                VALIDER
+              </Button>
+            </View>
+          </View>
+        </SafeAreaView>
       </View>
-    </SafeAreaView>
-  </View>
-</KeyboardAwareScrollView>
+    </KeyboardAwareScrollView>
   );
 }
 

@@ -35,7 +35,6 @@ export default function ArchiveScreen({ navigation, route }) {
   );
   const user = useSelector((state: { user: UserState }) => state.user.value);
 
-
   // Afficher les articles d'un rayon dont ouverture et fermeture modale //
 
   // // Modale //
@@ -128,7 +127,7 @@ export default function ArchiveScreen({ navigation, route }) {
     const resumeContent = [];
     currentArticle.resume.subtitles.forEach((e, i) => {
       let borderColor = {};
-      if (e === "Vertus") {
+      if (e === "Garanties responsables") {
         borderColor = { borderColor: "rgba(0, 122, 1, 0.6)" };
       } else if (e === "Points d'attention") {
         borderColor = { borderColor: "#FFC300" };

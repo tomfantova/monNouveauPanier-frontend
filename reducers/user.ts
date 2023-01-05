@@ -5,15 +5,15 @@ export type UserState = {
     firstname: string | null;
     lastname: string | null;
     email: string | null;
-    date: Date | null,
+    date: Date | null;
     token: string | null;
     preferences: {
-      type: number | null,
-      dietetique: number | null,
-      bilan: number | null,
-      ethique: number | null,
-      local: number | null,
-      agriculture: number | null,    
+      type: number | null;
+      dietetique: number | null;
+      bilan: number | null;
+      ethique: number | null;
+      local: number | null;
+      agriculture: number | null;
     };
     bookmarks: any[];
     lists: any[];
@@ -50,9 +50,7 @@ export const userSlice = createSlice({
     ) => {
       state.value = action.payload;
     },
-    logoutUser: (
-      state: UserState,
-    ) => {
+    logoutUser: (state: UserState) => {
       state.value = initialState.value;
     },
     addList: (state, action: PayloadAction<any>) => {

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
+import { REACT_APP_BACKEND_URL } from "react-native-dotenv";
 import {
   SafeAreaView,
   StyleSheet,
@@ -16,30 +17,41 @@ import {
   Button,
   HStack,
   Center,
+  useToast,
 } from "native-base";
+import { useDispatch } from "react-redux";
+import { connectUser } from "../../reducers/user";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function ConnexionScreen({ navigation }) {
   const { height, width, fontScale } = useWindowDimensions();
   const styles = makeStyles(height, width, fontScale);
-
+  const toast = useToast();
+  const dispatch = useDispatch();
   const [userInfos, setUserInfos] = useState({
     email: "",
     password: "",
   });
 
   const handleConnect = () => {
-    fetch("http://10.2.2.243:3000/users/signin", {
+    fetch(`${REACT_APP_BACKEND_URL}/users/signin`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userInfos),
     })
       .then((response) => response.json())
       .then((userData) => {
-        userData.result;
+        console.log(userData);
+        if (userData.result === true) {
+          dispatch(connectUser(userData.user));
+          navigation.navigate("TabNavigator");
+        } else {
+          toast.show({
+            description:
+              "Veuillez remplir tous les champs ou vérifier vos identifiants",
+          });
+        }
       });
-    navigation.navigate("TabNavigator");
-    console.log("user infos:", userInfos);
   };
 
   return (
@@ -68,8 +80,7 @@ export default function ConnexionScreen({ navigation }) {
                   fontWeight="medium"
                   size="xs"
                 >
-                  Entrez votre Email ou connectez-vous via votre compte Facebook
-                  ou Google
+                  Entrez votre Email et votre mot de passe.
                 </Heading>
 
                 <VStack space={3} mt="12">

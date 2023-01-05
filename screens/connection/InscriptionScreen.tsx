@@ -73,8 +73,7 @@ export default function InscriptionScreen({ navigation }) {
             fontWeight="medium"
             size="xs"
           >
-            Créer manuellement votre compte via le formulaire ci-dessous ou
-            directement depuis votre réseau social!
+            Créer manuellement votre compte via le formulaire ci-dessous !
           </Heading>
           <VStack space={3} mt="2">
             <Text
