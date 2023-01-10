@@ -151,7 +151,7 @@ export default function ArticleScreen({ navigation, route }) {
   let starIcon = "star-outline";
   let starColor = "black";
   if (user.bookmarks.length >= 0) {
-    console.log('test true')
+    console.log("test true");
     if (user.bookmarks.includes(articleToBook)) {
       starIcon = "star";
       starColor = "rgb(241, 161, 0)";
