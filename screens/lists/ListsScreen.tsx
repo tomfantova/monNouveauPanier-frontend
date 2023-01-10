@@ -15,9 +15,9 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   addExecutedList,
   removeExecutedList,
-  ExecutedListState
+  ExecutedListState,
 } from "../../reducers/executedList";
-import {UserState} from '../../reducers/user'
+import { UserState } from "../../reducers/user";
 import { addCurrentList, CurrentListState } from "../../reducers/currentList";
 import { modifyFalse, ModifyListState } from "../../reducers/modifyList";
 
@@ -259,7 +259,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
       marginTop: adaptToWidth(5),
       alignSelf: "flex-start",
       fontSize: normalizeText(16),
-      fontWeight: '600',
+      fontWeight: "600",
     },
     lists: {
       marginTop: adaptToWidth(5),
@@ -294,7 +294,7 @@ const makeStyles = (height: number, width: number, fontScale: number) => {
     },
     regularText: {
       fontSize: normalizeText(17),
-      fontWeight: '600',
+      fontWeight: "600",
       marginVertical: adaptToWidth(8),
     },
     noList: {
